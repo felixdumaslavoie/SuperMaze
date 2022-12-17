@@ -9,7 +9,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
-public abstract class Character {
+public abstract class GameObject {
 	protected Vector2 position;
 	protected TextureAtlas textureAtlas;
 	protected TextureRegion textureRegion;
@@ -21,12 +21,12 @@ public abstract class Character {
 	protected float elapsedTime = 0f;
 
 	
-	public Character(float x, float y) {
-		this.position = new Vector2();
-		this.position.x = x;
-		this.position.y = y;
+	public GameObject(float x, float y) {
+		this.position = new Vector2(x,y);
 	}
 	
 	
 	public abstract void draw (SpriteBatch batch);
+	
+	public abstract void dispose ();
 }

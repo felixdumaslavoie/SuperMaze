@@ -1,0 +1,47 @@
+feuActif.png
+size: 512, 1024
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+fire
+  rotate: false
+  xy: 0, 0
+  size: 133, 320
+  orig: 133, 320
+  offset: 0, 0
+  index: 0
+fire
+  rotate: false
+  xy: 133, 0
+  size: 133, 320
+  orig: 133, 320
+  offset: 0, 0
+  index: 1
+fire
+  rotate: false
+  xy: 266, 0
+  size: 133, 320
+  orig: 133, 320
+  offset: 0, 0
+  index: 2
+fire
+  rotate: false
+  xy: 0, 320
+  size: 133, 320
+  orig: 133, 320
+  offset: 0, 0
+  index: 3
+fire
+  rotate: false
+  xy: 133, 320
+  size: 133, 320
+  orig: 133, 320
+  offset: 0, 0
+  index: 4
+fire
+  rotate: false
+  xy: 266, 320
+  size: 133, 320
+  orig: 133, 320
+  offset: 0, 0
+  index: 5

@@ -11,15 +11,15 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 
-public class Player extends Character {
-
-
-	protected int action; 
+public class Player extends GameObject {
 	
 	protected Inputs inputs;
 	
 	protected boolean isMoving;
+	
+	protected boolean hudOn;
 	
 	public Player(float x, float y) {
 		super(x,y);
@@ -66,14 +66,29 @@ public class Player extends Character {
 			currentFrame = currentAnimation.getKeyFrame(stateTime, true);
 			
 		}
-		batch.draw(currentFrame, this.position.x, this.position.y, 100, 100);
+		
+		batch.draw(currentFrame, this.position.x, this.position.y, 100, 150);
 		
 	}
-	
 	
 	public void stopAnimation() {
 		isMoving = false;
 	}
+	
+	public Vector2 getPosition()
+	{
+		return this.position;
+	}
+	
+	public void toggleHud()
+	{
+		hudOn = !hudOn;
+	}
+	public boolean getHudState()
+	{
+		return hudOn;
+	}
+		
 	
 	public void dispose()
 	{

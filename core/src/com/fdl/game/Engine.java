@@ -10,27 +10,27 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.fdl.gui.Hud;
 
 public class Engine extends ApplicationAdapter {
-    OrthographicCamera camera;
-    ExtendViewport viewport;
-	World world;
+    private OrthographicCamera camera;
+    private ExtendViewport viewport;
+    private World world;
 	
-	SpriteBatch batch;
-	TextureAtlas textureAtlas;
-	Sprite sprite;
-	TextureRegion textureRegion;
-	
-	Player player;
+    private SpriteBatch batch;
+    private TextureAtlas textureAtlas;
+    private Sprite sprite;
+    private TextureRegion textureRegion;
 
+    private Hud hud;
 	
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
         camera = new OrthographicCamera();
         viewport = new ExtendViewport(800, 600, camera);
-		//world = new World();
-        player = new Player(0, 0);
+		world = new World(batch, camera);
+		hud = new Hud();
 	}
 	
 	@Override
@@ -43,16 +43,16 @@ public class Engine extends ApplicationAdapter {
 	@Override
 	public void render () {
 		ScreenUtils.clear(0, 0, 0, 0);
-		batch.begin();
-		player.draw(batch);
-		batch.end();
+		world.render();
+		if (world.getPlayer().getHudState())
+		{
+			hud.render(batch);			
+		}
 	}
 	
 	@Override
 	public void dispose () {
-		//world.dispose();
-		batch.dispose();
-		player.dispose();
+		world.dispose();
 		System.exit(-1);
 	}
 }

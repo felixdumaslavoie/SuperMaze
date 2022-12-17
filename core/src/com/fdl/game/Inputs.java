@@ -28,6 +28,18 @@ public class Inputs extends InputAdapter  {
 	public static boolean right() {
 		return (Gdx.input.isKeyPressed(Keys.D) || Gdx.input.isKeyPressed(Keys.RIGHT));
 	}	
+
+	@Override
+	public boolean keyDown(int keycode) {
+		
+		if(keycode == Keys.F2)
+		{
+			playerRef.toggleHud();
+		}
+		
+		return super.keyDown(keycode);
+	}
+	
 	
 	@Override
 	public boolean keyUp(int keycode) {
