@@ -13,11 +13,11 @@ public class World {
 	protected OrthographicCamera camera;
 	private Player player;
 	
-	public World(SpriteBatch batch, OrthographicCamera camera) {
+	public World(SpriteBatch batch, OrthographicCamera camera, Player player) {
 		this.batch = batch;
 		gameObjects = new  ArrayList<GameObject>();
 		map = new Map();
-		player = new Player(0,0);
+		this.player = player;
 		this.camera = camera;
 	}
 	
@@ -36,7 +36,11 @@ public class World {
 	{
 		return player;
 	}
-	
+	public Map getMap()
+	{
+		return map;
+	}
+		
 	
 	public void dispose() {
 		batch.dispose();

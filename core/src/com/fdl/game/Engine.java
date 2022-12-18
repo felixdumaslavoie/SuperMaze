@@ -16,11 +16,9 @@ public class Engine extends ApplicationAdapter {
     private OrthographicCamera camera;
     private ExtendViewport viewport;
     private World world;
+    private Player player;
 	
     private SpriteBatch batch;
-    private TextureAtlas textureAtlas;
-    private Sprite sprite;
-    private TextureRegion textureRegion;
 
     private Hud hud;
 	
@@ -29,8 +27,10 @@ public class Engine extends ApplicationAdapter {
 		batch = new SpriteBatch();
         camera = new OrthographicCamera();
         viewport = new ExtendViewport(800, 600, camera);
-		world = new World(batch, camera);
-		hud = new Hud();
+        player = new Player(50,100);
+		world = new World(batch, camera, player);
+		player.setMapRef(world.getMap());
+		hud = new Hud(player);
 	}
 	
 	@Override
