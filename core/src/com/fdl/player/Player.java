@@ -1,14 +1,19 @@
-package com.fdl.game;
+package com.fdl.player;
+
+import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.fdl.game.GameObject;
+import com.fdl.game.HitBox;
+import com.fdl.map.Tile;
 import com.fdl.sound.SoundModule;
 
 public class Player extends GameObject {
@@ -21,45 +26,84 @@ public class Player extends GameObject {
 	
 	protected OrthographicCamera camera;
 	
-	private int hp;
+	private float hp;
 	
 	private final int WIDTH = 100;
 	private final int HEIGHT = 175;
-	
+
 	private int tw;
 	private int th;
 	
+	public static final int HITBOX_WIDTH = 16;
+	public static final int HITBOX_HEIGHT = 20;
+	
 	private float speed;
 	
-	public Player(float x, float y) {
+	private float soundSpeedChecker = 0;
+	private boolean soundSpeedCheckerChange = false;
+	
+	private int delayLavaHit;
+
+
+	public Player(String id, float x, float y, TextureAtlas tx, HitBox hb) {
 		super(x,y);
+		spawnPoint = new Vector2(x,y);
 		inputs = new Inputs(this);
 		Gdx.input.setInputProcessor(inputs);
 		hp = 100;
 		stateTime = 0;
-		textureAtlas = new TextureAtlas(Gdx.files.internal("Spritesheets/bonhomme.atlas"));
-		currentAnimation = new Animation<TextureRegion> (0.033f, textureAtlas.findRegions("walkingup"), PlayMode.LOOP);
+		textureAtlas = tx;
+		currentAnimation = new Animation<TextureRegion> (0.033f, textureAtlas.findRegions("walkingup"), PlayMode.LOOP);			
+
 		currentFrame = currentAnimation.getKeyFrame(stateTime, true);
 		isMoving = false;
 		
 		tw = currentFrame.getRegionWidth();
 		th = currentFrame.getRegionHeight();
-		collisionRect = new Rectangle(position.x,position.y, tw,th);
+		collisionRect = hb;
 		
 		prevx =0;
 		prevy =0;
 		speed = 500;
+		
+		delayLavaHit = 0;
 	}
+
+	ArrayList<Character> collisions;
 	
 	@Override
 	public void draw (SpriteBatch batch) {
 		
+		collisions = mapRef.collisionWith(collisionRect.getRect());
+		
 		// Collision with map tiles correction
-		if (mapRef.collision(collisionRect))
+		if (collisions.size() == 0)
 		{
-			SoundModule.play("pew.wav");
+			SoundModule.playWalk("pew.wav");
 			position.x = prevx;
 			position.y = prevy;
+		}
+		
+		
+		if (collisions.contains(Tile.TILECODE_METAL) && isMoving)
+		{
+			
+			if ( elapsedTime - soundSpeedChecker > 0.4)
+			{
+				this.soundSpeedCheckerChange = true;
+				SoundModule.playWalk("footstep_metal.mp3", 0.4f);
+			}
+		}
+		
+		if (collisions.contains(Tile.TILECODE_LAVA))
+		{
+			this.lavaHit(25);
+		}
+		
+		if (soundSpeedCheckerChange)
+		{
+			soundSpeedChecker = elapsedTime;
+			soundSpeedCheckerChange = false;
 		}
 		
 		if (Inputs.up())
@@ -67,9 +111,10 @@ public class Player extends GameObject {
 			currentAnimation = new Animation<TextureRegion> (0.050f, textureAtlas.findRegions("walkingup"), PlayMode.LOOP);
 		
 			prevy = this.position.y;
-			if (!mapRef.collision(collisionRect))
+			if (!(collisions.size() == 0))
 			{				
-				this.position.y += speed * Gdx.graphics.getDeltaTime();				
+				this.position.y += speed * Gdx.graphics.getDeltaTime();	
+				isMoving = true;
 			}
 		}
 		if (Inputs.down())
@@ -77,27 +122,30 @@ public class Player extends GameObject {
 			currentAnimation = new Animation<TextureRegion> (0.050f, textureAtlas.findRegions("walkingdown"), PlayMode.LOOP);
 			prevy = this.position.y;
 
-			if (!mapRef.collision(collisionRect))
+			if (!(collisions.size() == 0))
 			{				
 				this.position.y -= speed * Gdx.graphics.getDeltaTime();
+				isMoving = true;
 			}
 		}
 		if (Inputs.left())
 		{
 			currentAnimation = new Animation<TextureRegion> (0.050f, textureAtlas.findRegions("walkingleft"), PlayMode.LOOP);
 			prevx = this.position.x;
-			if (!mapRef.collision(collisionRect))
+			if (!(collisions.size() == 0))
 			{	
 				this.position.x -= speed * Gdx.graphics.getDeltaTime();
+				isMoving = true;
 			}
 		}
 		if (Inputs.right())
 		{
 			currentAnimation = new Animation<TextureRegion> (0.050f, textureAtlas.findRegions("walkingright"), PlayMode.LOOP);
 			prevx = this.position.x;
-			if (!mapRef.collision(collisionRect))
+			if (!(collisions.size() == 0))
 			{	
 				this.position.x += speed * Gdx.graphics.getDeltaTime();
+				isMoving = true;
 			}
 		}
 		
@@ -109,14 +157,52 @@ public class Player extends GameObject {
 			currentFrame = currentAnimation.getKeyFrame(stateTime, true);
 		}
 		
-		collisionRect.setPosition(this.position.x, this.position.y);
+		collisionRect.getRect().setPosition(this.position.x,this.position.y - 35);
 		
 		batch.draw(currentFrame, this.position.x - tw*3,  this.position.y - th*2, WIDTH, HEIGHT);
+		elapsedTime += Gdx.graphics.getDeltaTime(); 
 		
+		// Drawing hitboxes
+		if(getHudState())
+		{
+			collisionRect.draw(batch, 0);			
+		}
+		
+		// Reset player if he is dead
+		if (isDead())
+		{
+			resetPlayer();
+		}
 	}
 	
+	
+	private void lavaHit(float damage) {
+		delayLavaHit += Gdx.graphics.getDeltaTime() *50;
+		if(delayLavaHit > 10)
+		{
+			
+			this.hp -= damage; 
+			if (this.hp < 0)
+				this.hp = 0;
+			SoundModule.playDamage("pew.wav");	
+			delayLavaHit = 0;
+		}
+	}
+	
+	public boolean isDead()
+	{
+		return hp==0;
+	}
+	
+	public void resetPlayer()
+	{
+		this.position.set(spawnPoint.x,spawnPoint.y);
+		this.hp = 100;
+	}
+
 	public void stopAnimation() {
 		isMoving = false;
+		SoundModule.stopWalk();
 	}
 	
 	public Vector2 getPosition()
@@ -124,15 +210,15 @@ public class Player extends GameObject {
 		return this.position;
 	}
 	
-	public int getHealth()
+	public float getHealth()
 	{
 		return hp;
 	}
 	
-	public void dispose()
-	{
-		textureAtlas.dispose();
+	public boolean hasMoved() {
+		return isMoving;
 	}
+	
 
 	public void toggleHud()
 	{
@@ -142,4 +228,18 @@ public class Player extends GameObject {
 	{
 		return hudOn;
 	}
+	
+	public void drawHitBoxes(Batch batch)
+	{
+		this.collisionRect.draw(batch, 1);
+	}
+
+
+	@Override
+	public void dispose()
+	{
+		textureAtlas.dispose();
+	}
+	
+
 }

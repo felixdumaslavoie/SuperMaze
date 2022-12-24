@@ -7,31 +7,33 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.fdl.physics.CollisionRect;
 
 public class Tile {
-	static int WIDTH = 100;
-	static Texture LAVE = new Texture(Gdx.files.internal("./stage/lave.png"));
-	static Texture METAL = new Texture(Gdx.files.internal("./stage/metal.png"));
+	static final public int WIDTH = 100;
+	static final Texture LAVE = new Texture(Gdx.files.internal("./stage/lave.png"));
+	static final Texture METAL = new Texture(Gdx.files.internal("./stage/metal.png"));
+	
+	static public final char TILECODE_LAVA = 1;
+	static public final char TILECODE_METAL = 2;
 
-	protected String type;
+	protected char type;
 	private Texture texture;
 	protected Vector2 position;
 	
 	protected Rectangle rect;
 
 	
-	public Tile(float x, float y, String type) throws FileNotFoundException {
+	public Tile(float x, float y, char tileCode) throws FileNotFoundException {
 		position = new Vector2(x,y);
 		rect = new Rectangle(x, y, Tile.WIDTH, Tile.WIDTH);
 
-		this.type = type;
+		this.type = tileCode;
 		
 		switch (this.type) {
-		case "lava":
+		case Tile.TILECODE_LAVA:
 			texture = Tile.LAVE;
 			break;
-		case "metal":
+		case Tile.TILECODE_METAL:
 			texture = Tile.METAL;
 			break;
 		default:
@@ -44,12 +46,16 @@ public class Tile {
 		batch.draw(texture,position.x,position.y,100,100);
 	}
 
-	public boolean collides(Rectangle rect)
+	public char collides(Rectangle rect)
 	{
-		if (this.type.contentEquals("lava"))
+		if (type == Tile.TILECODE_LAVA && this.rect.overlaps(rect))
 		{
-			return this.rect.overlaps(rect);			
+			return Tile.TILECODE_LAVA;			
 		}
-		return false;
+		if (type == Tile.TILECODE_METAL && this.rect.overlaps(rect))
+		{
+			return Tile.TILECODE_METAL;			
+		}
+		return 0;
 	}
 }

@@ -1,4 +1,4 @@
-package com.fdl.game;
+package com.fdl.player;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;

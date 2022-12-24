@@ -8,13 +8,13 @@ import java.util.Random;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.fdl.game.GameObject;
-import com.fdl.physics.CollisionRect;
 
-public class Map {
+public class Map { 
 
 	protected  ArrayList<Tile> mapTiles;
-	private final int WIDTH = 50;
-	private final int HEIGHT = 50;
+	public static final int WIDTH = 50;
+	public static final int HEIGHT = 50;
+	
 	
 	public Map()
 	{
@@ -27,12 +27,12 @@ public class Map {
 				{
 					if (j == 0 || i == 0 || j == WIDTH-1 || i == WIDTH -1)
 					{
-						mapTiles.add(new Tile(i*Tile.WIDTH,j*Tile.WIDTH,"metal"));
+						mapTiles.add(new Tile(i*Tile.WIDTH,j*Tile.WIDTH, Tile.TILECODE_METAL));
 						
 					}	
 					else {
 						
-						mapTiles.add(new Tile(i*Tile.WIDTH,j*Tile.WIDTH,"lava"));
+						mapTiles.add(new Tile(i*Tile.WIDTH,j*Tile.WIDTH,Tile.TILECODE_LAVA));
 					}
 				}
 			}
@@ -49,15 +49,18 @@ public class Map {
 		}
 	}
 	
-	public boolean collision(Rectangle rect)
+	// Je pourrais aussi retourner directement l'objet de chaque tile avec une collision
+	public ArrayList<Character> collisionWith(Rectangle rect)
 	{
+		ArrayList<Character> tilesCollisions = new ArrayList<Character>();
+		char collidesWith;
 		for (Tile tile : mapTiles) {
-			if (tile.collides(rect))
+			collidesWith = tile.collides(rect);
+			if(!tilesCollisions.contains(tile.type) && collidesWith != 0)
 			{
-				return true;
+				tilesCollisions.add(collidesWith);
 			}
 		}
-		return false;
-		
+		return tilesCollisions;
 	}
 }
