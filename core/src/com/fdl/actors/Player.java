@@ -1,9 +1,8 @@
-package com.fdl.player;
+package com.fdl.actors;
 
 import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -13,6 +12,8 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.fdl.game.GameObject;
 import com.fdl.game.HitBox;
+import com.fdl.gui.Hud;
+import com.fdl.io.Inputs;
 import com.fdl.map.Tile;
 import com.fdl.sound.SoundModule;
 
@@ -24,12 +25,10 @@ public class Player extends GameObject {
 	
 	protected boolean hudOn;
 	
-	protected OrthographicCamera camera;
-	
 	private float hp;
 	
-	private final int WIDTH = 100;
-	private final int HEIGHT = 175;
+	private final int WIDTH = 120;
+	private final int HEIGHT = 150;
 
 	private int tw;
 	private int th;
@@ -45,7 +44,7 @@ public class Player extends GameObject {
 	private int delayLavaHit;
 
 
-	public Player(String id, float x, float y, TextureAtlas tx, HitBox hb) {
+	public Player(String id, float x, float y, TextureAtlas tx, TextureAtlas textureFeu, HitBox hb) {
 		super(x,y);
 		spawnPoint = new Vector2(x,y);
 		inputs = new Inputs(this);
@@ -74,6 +73,12 @@ public class Player extends GameObject {
 	@Override
 	public void draw (SpriteBatch batch) {
 		
+		// Reset player if he is dead
+		if (isDead())
+		{
+			resetPlayer();
+		}
+		
 		collisions = mapRef.collisionWith(collisionRect.getRect());
 		
 		// Collision with map tiles correction
@@ -98,6 +103,7 @@ public class Player extends GameObject {
 		if (collisions.contains(Tile.TILECODE_LAVA))
 		{
 			this.lavaHit(25);
+			
 		}
 		
 		if (soundSpeedCheckerChange)
@@ -158,20 +164,14 @@ public class Player extends GameObject {
 		}
 		
 		collisionRect.getRect().setPosition(this.position.x,this.position.y - 35);
-		
-		batch.draw(currentFrame, this.position.x - tw*3,  this.position.y - th*2, WIDTH, HEIGHT);
+
+		batch.draw(currentFrame, this.position.x - 35, this.position.y - 35, WIDTH, HEIGHT);
 		elapsedTime += Gdx.graphics.getDeltaTime(); 
 		
 		// Drawing hitboxes
-		if(getHudState())
+		if(Hud.hitboxesState())
 		{
 			collisionRect.draw(batch, 0);			
-		}
-		
-		// Reset player if he is dead
-		if (isDead())
-		{
-			resetPlayer();
 		}
 	}
 	
@@ -219,15 +219,6 @@ public class Player extends GameObject {
 		return isMoving;
 	}
 	
-
-	public void toggleHud()
-	{
-		hudOn = !hudOn;
-	}
-	public boolean getHudState()
-	{
-		return hudOn;
-	}
 	
 	public void drawHitBoxes(Batch batch)
 	{

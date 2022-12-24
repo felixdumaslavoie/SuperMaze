@@ -1,117 +1,117 @@
 bonhomme.png
-size: 128, 128
+size: 2048, 2048
 format: RGBA8888
 filter: Linear,Linear
 repeat: none
 walkingdown
   rotate: false
-  xy: 1, 1
-  size: 16, 32
-  orig: 16, 32
+  xy: 0, 0
+  size: 320, 416
+  orig: 320, 416
   offset: 0, 0
   index: 0
 walkingdown
   rotate: false
-  xy: 19, 1
-  size: 16, 32
-  orig: 16, 32
+  xy: 320, 0
+  size: 320, 416
+  orig: 320, 416
   offset: 0, 0
   index: 1
 walkingdown
   rotate: false
-  xy: 1, 1
-  size: 16, 32
-  orig: 16, 32
+  xy: 640, 0
+  size: 320, 416
+  orig: 320, 416
   offset: 0, 0
   index: 2
 walkingdown
   rotate: false
-  xy: 37, 1
-  size: 16, 32
-  orig: 16, 32
+  xy: 960, 0
+  size: 320, 416
+  orig: 320, 416
   offset: 0, 0
   index: 3
-walkingright
-  rotate: false
-  xy: 55, 1
-  size: 16, 32
-  orig: 16, 32
-  offset: 0, 0
-  index: 4
-walkingright
-  rotate: false
-  xy: 73, 1
-  size: 16, 32
-  orig: 16, 32
-  offset: 0, 0
-  index: 5
-walkingright
-  rotate: false
-  xy: 55, 1
-  size: 16, 32
-  orig: 16, 32
-  offset: 0, 0
-  index: 6
-walkingright
-  rotate: false
-  xy: 91, 1
-  size: 16, 32
-  orig: 16, 32
-  offset: 0, 0
-  index: 7
-walkingup
-  rotate: false
-  xy: 109, 1
-  size: 16, 32
-  orig: 16, 32
-  offset: 0, 0
-  index: 8
-walkingup
-  rotate: false
-  xy: 1, 35
-  size: 16, 32
-  orig: 16, 32
-  offset: 0, 0
-  index: 9
-walkingup
-  rotate: false
-  xy: 109, 1
-  size: 16, 32
-  orig: 16, 32
-  offset: 0, 0
-  index: 10
-walkingup
-  rotate: false
-  xy: 19, 35
-  size: 16, 32
-  orig: 16, 32
-  offset: 0, 0
-  index: 11
 walkingleft
   rotate: false
-  xy: 37, 35
-  size: 16, 32
-  orig: 16, 32
+  xy: 1280, 0
+  size: 320, 416
+  orig: 320, 416
   offset: 0, 0
   index: 12
 walkingleft
   rotate: false
-  xy: 55, 35
-  size: 16, 32
-  orig: 16, 32
+  xy: 1600, 0
+  size: 320, 416
+  orig: 320, 416
   offset: 0, 0
   index: 13
 walkingleft
   rotate: false
-  xy: 37, 35
-  size: 16, 32
-  orig: 16, 32
+  xy: 0, 416
+  size: 320, 416
+  orig: 320, 416
   offset: 0, 0
   index: 14
 walkingleft
   rotate: false
-  xy: 73, 35
-  size: 16, 32
-  orig: 16, 32
+  xy: 320, 416
+  size: 320, 416
+  orig: 320, 416
   offset: 0, 0
   index: 15
+walkingright
+  rotate: false
+  xy: 640, 416
+  size: 320, 416
+  orig: 320, 416
+  offset: 0, 0
+  index: 4
+walkingright
+  rotate: false
+  xy: 960, 416
+  size: 320, 416
+  orig: 320, 416
+  offset: 0, 0
+  index: 5
+walkingright
+  rotate: false
+  xy: 1280, 416
+  size: 320, 416
+  orig: 320, 416
+  offset: 0, 0
+  index: 6
+walkingright
+  rotate: false
+  xy: 1600, 416
+  size: 320, 416
+  orig: 320, 416
+  offset: 0, 0
+  index: 7
+walkingup
+  rotate: false
+  xy: 0, 832
+  size: 320, 416
+  orig: 320, 416
+  offset: 0, 0
+  index: 8
+walkingup
+  rotate: false
+  xy: 320, 832
+  size: 320, 416
+  orig: 320, 416
+  offset: 0, 0
+  index: 9
+walkingup
+  rotate: false
+  xy: 640, 832
+  size: 320, 416
+  orig: 320, 416
+  offset: 0, 0
+  index: 10
+walkingup
+  rotate: false
+  xy: 960, 832
+  size: 320, 416
+  orig: 320, 416
+  offset: 0, 0
+  index: 11

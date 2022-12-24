@@ -5,8 +5,8 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.fdl.actors.Player;
 import com.fdl.game.ressources.Fonts;
-import com.fdl.player.Player;
 
 public class Hud {
 
@@ -14,6 +14,8 @@ public class Hud {
 	private BitmapFont font;
 	
 	private Player playerRef;
+	
+	private static boolean displayHitboxes = false;
 	
 	public Hud(Player playerRef, BitmapFont defaultFont )
 	{
@@ -43,4 +45,13 @@ public class Hud {
 		font.setColor(Color.WHITE);
 		spriteBatch.end();
 	}
+	
+	public static void toggleHitboxes() {
+		displayHitboxes = !displayHitboxes;
+	}
+	
+	public final static boolean hitboxesState() {
+		return displayHitboxes;
+	}
+	
 }

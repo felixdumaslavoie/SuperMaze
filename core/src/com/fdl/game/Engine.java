@@ -1,6 +1,7 @@
 package com.fdl.game;
 
 import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.Iterator;
 
 import org.json.JSONArray;
@@ -14,8 +15,10 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.fdl.actors.Actor;
 import com.fdl.game.ressources.Fonts;
 import com.fdl.game.ressources.Textures;
 import com.fdl.gui.Hud;
@@ -40,10 +43,13 @@ public class Engine extends ApplicationAdapter {
     private final float UPDATE_TIME = 1/60f;
     private float timer;
     
-    private TextureAtlas textureTest;
+    private  HashMap<String, TextureAtlas> textures;
+    private TextureAtlas textureTest; // Texture du bonhomme de tests
+    private TextureAtlas textureEtatFeu;
     
     private BitmapFont defaultFont;
-	
+    
+    
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
@@ -52,7 +58,12 @@ public class Engine extends ApplicationAdapter {
         
         defaultFont = Fonts.defaultFont;
         textureTest = Textures.textureTest;
+        textureEtatFeu = Textures.textureFeu;
        
+        textures = new HashMap<String, TextureAtlas>();
+        textures.put(Textures.BONHOMME_TEST, textureTest);
+        textures.put(Textures.ETAT_FEU, textureEtatFeu);
+        
 		world = new World(batch, mainCamera);	
 		
 		
@@ -74,7 +85,7 @@ public class Engine extends ApplicationAdapter {
 		updateServer();
 		if (world.getPlayer() != null) 
 		{
-			if (world.getPlayer().getHudState())
+			if (Hud.hitboxesState())
 			{
 				hud.render(batch);			
 			}
@@ -122,7 +133,7 @@ public class Engine extends ApplicationAdapter {
 				 float y = (float) data.getDouble("y");
 				 Gdx.app.log("SocketIO", "MyID=" + id);
 
-				 world.playerInit(id,x,y, textureTest);
+				 world.playerInit(id,x,y, textureTest, textureEtatFeu);
 				 hud = new Hud(world.getPlayer(), defaultFont);
 				 		 
 			 }catch (JSONException e) {
@@ -138,7 +149,7 @@ public class Engine extends ApplicationAdapter {
 					 String id = objects.getJSONObject(i).getString("id");
 					 float x = (float) objects.getJSONObject(i).getDouble("x");
 					 float y = (float) objects.getJSONObject(i).getDouble("y");
-					 world.sceneCharacterInit(id, x, y, textureTest);
+					 world.sceneCharacterInit(id, x, y, textures);
 				}
 				
 			}catch(JSONException e)
@@ -153,7 +164,7 @@ public class Engine extends ApplicationAdapter {
 				 String id = data.getString("id");
 				 float x = (float) data.getDouble("x");
 				 float y = (float) data.getDouble("y");
-				 world.sceneCharacterInit(id, x, y, textureTest);
+				 world.sceneCharacterInit(id, x, y, textures);
 			 }catch (JSONException e) {
 				 Gdx.app.log("SocketIO", "Player position cannot be updated.");
 			 }			
@@ -164,10 +175,9 @@ public class Engine extends ApplicationAdapter {
 				 String id = data.getString("id");
 				 float x = (float) data.getDouble("x");
 				 float y = (float) data.getDouble("y");
-				 GameObject go = world.getObject(id);
-				 if (go != null) {
-					 go.position.x = x;
-					 go.position.y = y;
+				 Actor act = world.getActor(id);
+				 if (act != null) {
+					 act.updatePosition(new Vector2(x,y));
 				 }
 			 }catch (JSONException e) {
 				 Gdx.app.log("SocketIO", "Player position cannot be updated.");

@@ -12,7 +12,6 @@ public abstract class GameObject implements IGameObject {
 	protected Vector2 position;
 	protected Vector2 spawnPoint;
 	protected TextureAtlas textureAtlas;
-	protected TextureRegion textureRegion;
 	protected float stateTime;
 	protected Animation<TextureRegion> currentAnimation;
 	protected TextureRegion currentFrame;

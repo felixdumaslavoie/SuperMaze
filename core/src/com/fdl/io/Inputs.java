@@ -1,7 +1,9 @@
-package com.fdl.player;
+package com.fdl.io;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
+import com.fdl.actors.Player;
+import com.fdl.gui.Hud;
 import com.badlogic.gdx.InputAdapter;
 
 public class Inputs extends InputAdapter  {
@@ -34,7 +36,7 @@ public class Inputs extends InputAdapter  {
 		
 		if(keycode == Keys.F2)
 		{
-			playerRef.toggleHud();
+			Hud.toggleHitboxes();
 		}
 		
 		return super.keyDown(keycode);
