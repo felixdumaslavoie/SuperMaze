@@ -50,4 +50,11 @@ public class Hitbox {
 	    	this.hitbox.x = x;
 	    	this.hitbox.y = y;
 	    }
+	    
+	    @Override
+	    public String toString()
+	    {
+			return "HITBOX rectangle pos (x,y): (" + this.hitbox.x + "," + this.hitbox.y + ")";
+	    	
+	    }
 }

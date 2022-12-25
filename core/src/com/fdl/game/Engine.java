@@ -38,7 +38,7 @@ public class Engine extends ApplicationAdapter {
 
     private Hud hud;
     
-    private Socket socket;
+    private static Socket socket;
     
     private final float UPDATE_TIME = 1/60f;
     private float timer;
@@ -224,7 +224,13 @@ public class Engine extends ApplicationAdapter {
 					 Gdx.app.log("SocketIO", "Player position cannot be updated.");
 				 }				
 			}});
-		}	
+		}
+	
+	
+	public static Socket getSocket()
+	{
+		return Engine.socket;
+	}
 				
 
 	

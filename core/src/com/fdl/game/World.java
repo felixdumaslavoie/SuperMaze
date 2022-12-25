@@ -84,7 +84,7 @@ public class World {
 	public void sceneCharacterInit(String id, float x, float y, HashMap<String, TextureAtlas> textures)
 	{
 		//HitBox newHitbox = new HitBox(0,0, Player.HITBOX_HEIGHT, Player.HITBOX_WIDTH, hitboxRenderer);
-		gameActors.put(id, new SceneCharacter(id, x, y, batch, hitboxRenderer, textures));
+		gameActors.put(id, new SceneCharacter(id, x, y, batch, hitboxRenderer, textures, map));
 	}
 
 	public Actor getActor(String id)

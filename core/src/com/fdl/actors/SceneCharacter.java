@@ -11,11 +11,12 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.fdl.game.GameObject;
 import com.fdl.game.HitBox;
+import com.fdl.map.Map;
 
 public class SceneCharacter extends Actor {
 	
-	public SceneCharacter(String id, float x, float y, SpriteBatch batch, ShapeRenderer shapeRenderer, HashMap<String, TextureAtlas> textures) {
-		super(id, x, y, batch, shapeRenderer, textures);
+	public SceneCharacter(String id, float x, float y, SpriteBatch batch, ShapeRenderer shapeRenderer, HashMap<String, TextureAtlas> textures, Map mapRef) {
+		super(id, x, y, batch, shapeRenderer, textures, mapRef);
 	}
 	
 	

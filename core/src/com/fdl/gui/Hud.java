@@ -72,6 +72,7 @@ public class Hud {
 			}
 			
 			font.draw(spriteBatch, "HP: " + (int)otherPlayer.getHealth(), hudCamera.viewportWidth-70, hudCamera.viewportHeight);
+			font.draw(spriteBatch, "Player " + otherPlayer.getHitboxPosition(), 0, hudCamera.viewportHeight - 50);
 			font.setColor(Color.WHITE);
 			spriteBatch.end();
 		}

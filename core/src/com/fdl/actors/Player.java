@@ -23,15 +23,18 @@ public class Player extends Actor {
 	
 	protected Inputs inputs;
 	
-	protected boolean isMoving;
 	
 	private float hp;
 	
 	private final int WIDTH = 120;
 	private final int HEIGHT = 150;
 	
+	private int spriteCorrectionX = 53;
+	private int spriteCorrectionY = 21;
+	
 	public static final int HITBOX_WIDTH = 16;
 	public static final int HITBOX_HEIGHT = 20;
+	
 	
 	private float speed;
 	
@@ -42,22 +45,26 @@ public class Player extends Actor {
 	
 	private Vector2 spawnPoint;
 
-	protected Map mapRef;
+	protected boolean isMoving;
 
+	//Time
+	protected float elapsedTime = 0f;
+	
+	
+	
 	public Player(String id, float x, float y, Map mapRef, SpriteBatch batch, ShapeRenderer hitBoxRenderer, HashMap<String, TextureAtlas> textures) {
-		super(id, y, y, batch, hitBoxRenderer, textures);
+		super(id, x, y, batch, hitBoxRenderer, textures, mapRef);
 		spawnPoint = new Vector2(x,y);
 		
-		// TODO
 		inputs = new Inputs(this);
 		Gdx.input.setInputProcessor(inputs);
 		hp = 100;
-		stateTime = 0;
+		animationTime = 0;
 		textureAtlas = textures.get(Textures.BONHOMME_TEST);
 		currentAnimation = new Animation<TextureRegion> (0.033f, textureAtlas.findRegions("walkingup"), PlayMode.LOOP);			
 
 		this.mapRef = mapRef;
-		currentFrame = currentAnimation.getKeyFrame(stateTime, true);
+		currentFrame = currentAnimation.getKeyFrame(animationTime, true);
 		isMoving = false;
 
 		
@@ -65,11 +72,56 @@ public class Player extends Actor {
 		
 		delayLavaHit = 0;
 	}
-
-	ArrayList<Character> collisions;
 	
 	@Override
 	public void draw () {
+		super.draw();
+		
+		if (collisions.contains(Tile.TILECODE_LAVA))
+		{
+			this.lavaHit(25);
+		}
+		
+		if (Inputs.up())
+		{
+			if (!(collisions.size() == 0))
+			{				
+				this.position.y += speed * Gdx.graphics.getDeltaTime();	
+				isMoving = true;
+			}
+		}
+		
+		if (Inputs.down())
+		{
+			if (!(collisions.size() == 0))
+			{				
+				this.position.y -= speed * Gdx.graphics.getDeltaTime();
+				isMoving = true;
+			}
+		}
+		
+		if (Inputs.left())
+		{
+			if (!(collisions.size() == 0))
+			{	
+				this.position.x -= speed * Gdx.graphics.getDeltaTime();
+				isMoving = true;
+			}
+		}
+		if (Inputs.right())
+		{
+			if (!(collisions.size() == 0))
+			{	
+				this.position.x += speed * Gdx.graphics.getDeltaTime();
+				isMoving = true;
+			}
+		}
+		
+		if (isDead())
+		{
+			resetPlayer();
+		}
+		/*
 		// Reset player if he is dead
 		if (isDead())
 		{
@@ -77,13 +129,6 @@ public class Player extends Actor {
 		}
 		
 		collisions = mapRef.collisionWith(defaultHitbox.getRect());
-		
-		// Collision with map tiles correction
-		if (collisions.size() == 0)
-		{
-			SoundModule.playWalk("pew.wav");
-			position = previousPosition.cpy();
-		}
 		
 		
 		if (collisions.contains(Tile.TILECODE_METAL) && isMoving)
@@ -99,7 +144,6 @@ public class Player extends Actor {
 		if (collisions.contains(Tile.TILECODE_LAVA))
 		{
 			this.lavaHit(25);
-			
 		}
 		
 		if (soundSpeedCheckerChange)
@@ -153,27 +197,27 @@ public class Player extends Actor {
 		
 		if (Inputs.up() || Inputs.down() || Inputs.left() || Inputs.right())
 		{
-			stateTime += Gdx.graphics.getDeltaTime(); // Accumulate elapsed animation time
+			animationTime += Gdx.graphics.getDeltaTime(); // Accumulate elapsed animation time
 			isMoving = true;	
 		}
 		
 		if (!isMoving)
 		{
-			stateTime = 0;
+			animationTime = 0;
 			SoundModule.stopWalk();
 		}
 		
-		currentFrame = currentAnimation.getKeyFrame(stateTime, true);
-		defaultHitbox.getRect().setPosition(this.position.x,this.position.y - 35);
+		currentFrame = currentAnimation.getKeyFrame(animationTime, true);
+		defaultHitbox.getRect().setPosition(this.position.x,this.position.y);
 
-		batch.draw(currentFrame, this.position.x - 35, this.position.y - 35, WIDTH, HEIGHT);
+		batch.draw(currentFrame, this.position.x - spriteCorrectionX, this.position.y - spriteCorrectionY, WIDTH, HEIGHT);
 		elapsedTime += Gdx.graphics.getDeltaTime(); 
 		
 		// Drawing hitboxes
 		if(Hud.hitboxesState())
 		{
 			defaultHitbox.draw();			
-		}
+		}*/
 	}
 	
 	
@@ -204,6 +248,11 @@ public class Player extends Actor {
 	public void stopAnimation() {
 		isMoving = false;
 		SoundModule.stopWalk();
+	}
+	
+	public String getHitboxPosition()
+	{
+		return defaultHitbox.toString();
 	}
 	
 	public Vector2 getPosition()

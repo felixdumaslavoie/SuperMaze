@@ -1,5 +1,6 @@
 package com.fdl.actors;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.badlogic.gdx.Gdx;
@@ -12,6 +13,9 @@ import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.math.Vector2;
 import com.fdl.game.ressources.Textures;
 import com.fdl.gui.Hud;
+import com.fdl.map.Map;
+import com.fdl.map.Tile;
+import com.fdl.sound.SoundModule;
 
 public class Actor {
 	// Actor data
@@ -21,10 +25,16 @@ public class Actor {
 	protected char direction;
 	
 	//Animation
-	protected Animation<TextureRegion> currentAnimation;
 	protected TextureRegion currentFrame;
 	protected TextureAtlas textureAtlas;
-	protected float stateTime;
+	protected Animation<TextureRegion> currentAnimation;
+	protected float animationTime;
+	protected TextureAtlas actorState;
+	protected Animation<TextureRegion> currentState;
+	protected float stateAnimationTime;
+	
+	//Is moving
+	boolean isMoving;
 	
 	//Render
 	SpriteBatch batch;
@@ -38,11 +48,12 @@ public class Actor {
 	public final float DEFAULT_HITBOX_WIDTH = 16;
 	public final float DEFAULT_HITBOX_HEIGHT = 20;
 	
-	//Time
-	protected float elapsedTime = 0f;
+	//Map
+	protected Map mapRef;
+	protected ArrayList<Character> collisions;
+
 	
-	
-	public Actor(String id, float x, float y, SpriteBatch batch, ShapeRenderer shapeRenderer, HashMap<String, TextureAtlas> textures) {
+	public Actor(String id, float x, float y, SpriteBatch batch, ShapeRenderer shapeRenderer, HashMap<String, TextureAtlas> textures, Map mapRef) {
 		this.id = id;
 		this.position = new Vector2(x,y);
 		this.direction = 'u';
@@ -50,11 +61,19 @@ public class Actor {
 		//render
 		this.batch = batch;
 		
-		stateTime = 0;
+		//Map
+		this.mapRef = mapRef;
+		
+		//Animation
+		animationTime = 0;
+		stateAnimationTime = 0;
 		textureAtlas = textures.get(Textures.BONHOMME_TEST);
+		
+		actorState = textures.get(Textures.ETAT_FEU);
+		
 		currentAnimation = new Animation<TextureRegion> (0.033f, textureAtlas.findRegions("walkingup"), PlayMode.LOOP);
 		
-		currentFrame = currentAnimation.getKeyFrame(stateTime, true);
+		currentFrame = currentAnimation.getKeyFrame(animationTime, true);
 		
 		defaultHitbox = new Hitbox(batch, shapeRenderer, x, y,DEFAULT_HITBOX_WIDTH, DEFAULT_HITBOX_HEIGHT);
 		
@@ -67,20 +86,45 @@ public class Actor {
 	
 	public void draw () {
 		
-		// Find displacement direction
-		Vector2 dir = previousPosition.sub(position).nor();
+		// Collisions test
+		collisions = mapRef.collisionWith(defaultHitbox.getRect());
 		
-		boolean isMoving = false;
-		if (vectorNormalNotZero(dir))
+		// Collision with map tiles correction
+		if (collisions.size() == 0)
 		{
-			isMoving = true;
+			position = previousPosition.cpy();
+		}
+		
+		// New collision system
+		if (position.x <= 0 || position.y <= 0 || position.x >= Map.getUpperBoundX() || position.y >= Map.getUpperBoundY())
+		{
+			if (previousPosition.x <= 0) {
+				previousPosition.x = 5;
+			}
+			if (previousPosition.y <= 0) {
+				previousPosition.y = 5;
+			}
+			
+			if (previousPosition.x >= Map.getUpperBoundX())
+			{
+				previousPosition.x = Map.getUpperBoundX() - 10;
+			}
+			if (previousPosition.y >= Map.getUpperBoundY())
+			{
+				previousPosition.y = Map.getUpperBoundY() - 10;
+			}
+			SoundModule.playWalk("pew.wav");
+			position = previousPosition.cpy();
 		}
 		
 		
-		if (Hud.hitboxesState())
+		// Find displacement direction
+		Vector2 dir = previousPosition.sub(position).nor();
+		
+		isMoving = false;
+		if (vectorNormalNotZero(dir))
 		{
-			defaultHitbox.setPosition(this.position.x, this.position.y);
-			defaultHitbox.draw();
+			isMoving = true;
 		}
 		
 		if (dir.x == 0.0f && dir.y == -1.0f)
@@ -92,7 +136,7 @@ public class Actor {
 		
 		if (dir.x == 0.0f && dir.y == 1.0f)
 		{
-			direction = 'u';
+			direction = 'd';
 			currentAnimation = new Animation<TextureRegion> (0.050f, textureAtlas.findRegions("walkingdown"), PlayMode.LOOP);
 			
 		}
@@ -112,25 +156,40 @@ public class Actor {
 		
 		if (!isMoving)
 		{
-			stateTime = 0;
+			animationTime = 0;
 		}
 		
 		if (isMoving)
 		{
 			previousPosition.x = position.x;
 			previousPosition.y = position.y;
-			stateTime += Gdx.graphics.getDeltaTime(); // Accumulate elapsed animation time
+			animationTime += Gdx.graphics.getDeltaTime(); // Accumulate elapsed animation time
 		}
 		
-		currentFrame = currentAnimation.getKeyFrame(stateTime, true);
+		currentFrame = currentAnimation.getKeyFrame(animationTime, true);
 		
+		defaultHitbox.setPosition(this.position.x, this.position.y);
+
 		batch.draw(currentFrame,  this.position.x - 35,  this.position.y -35, WIDTH, HEIGHT);
+		
+		if (collisions.contains(Tile.TILECODE_LAVA))
+		{
+			stateAnimationTime += Gdx.graphics.getDeltaTime();
+			currentState = new Animation<TextureRegion> (0.050f, actorState.findRegions("fire"), PlayMode.LOOP);
+			currentFrame = currentState.getKeyFrame(stateAnimationTime, true);
+			batch.draw(currentFrame,  this.position.x - 35,  this.position.y -35, WIDTH, HEIGHT);
+		}
+		if (Hud.hitboxesState())
+		{
+			defaultHitbox.draw();
+		}
+		
+		previousPosition = this.position.cpy();
 	}
 	
 	
 	public void updatePosition(Vector2 newPosition)
 	{
-		previousPosition = this.position.cpy();
 		this.position = newPosition;
 	}
 
