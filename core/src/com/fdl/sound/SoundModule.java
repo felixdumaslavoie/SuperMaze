@@ -1,7 +1,5 @@
 package com.fdl.sound;
 
-import java.io.FileNotFoundException;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 
@@ -41,7 +39,6 @@ public class SoundModule {
 	
 	public static void playDamage(String sound) 
 	{
-		
 			SoundModule.channelDamage = Gdx.audio.newSound(Gdx.files.internal("sounds/"+ sound));
 			SoundModule.channelDamage.play(SoundModule.volumeFX);			
 	}

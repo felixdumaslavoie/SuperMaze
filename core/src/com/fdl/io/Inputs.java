@@ -2,16 +2,22 @@ package com.fdl.io;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
-import com.fdl.actors.Player;
+import com.fdl.game.Player;
 import com.fdl.gui.Hud;
 import com.badlogic.gdx.InputAdapter;
 
 public class Inputs extends InputAdapter  {
 
 	Player playerRef;
+	com.fdl.actors.Player otherPlayer;
 	
 	public Inputs(Player player) {
-		playerRef = player;
+		playerRef =player;
+		// TODO Auto-generated constructor stub
+	}
+	
+	public Inputs(com.fdl.actors.Player player) {
+		otherPlayer =player;
 		// TODO Auto-generated constructor stub
 	}
 
@@ -45,7 +51,16 @@ public class Inputs extends InputAdapter  {
 	
 	@Override
 	public boolean keyUp(int keycode) {
-		playerRef.stopAnimation();
+		if (playerRef != null)
+		{
+			playerRef.stopAnimation();			
+		}
+		
+		if (otherPlayer != null)
+		{
+			otherPlayer.stopAnimation();
+		}
+		
 		return super.keyUp(keycode);
 	}
 	

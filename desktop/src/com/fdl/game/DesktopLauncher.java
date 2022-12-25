@@ -3,7 +3,6 @@ package com.fdl.game;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.fdl.game.Engine;
-import com.fdl.networking.Connection;
 
 
 // Please note that on macOS your application needs to be started with the -XstartOnFirstThread JVM argument

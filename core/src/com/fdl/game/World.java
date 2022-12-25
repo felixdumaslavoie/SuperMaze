@@ -11,7 +11,6 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.fdl.actors.Actor;
-import com.fdl.actors.Player;
 import com.fdl.actors.SceneCharacter;
 import com.fdl.map.Map;
 import com.fdl.map.Tile;
@@ -22,7 +21,9 @@ public class World {
 	private HashMap<String, Actor> gameActors;
 	protected Map map;
 	protected OrthographicCamera camera;
+	
 	private Player player;
+	private com.fdl.actors.Player otherPlayer;
 	
 	private HitBox playerHitbox;
 	private ShapeRenderer hitboxRenderer;
@@ -44,6 +45,8 @@ public class World {
 	public void render() {
 		if (player != null)
 			camera.position.set(player.getPosition().x, player.getPosition().y, 0);			
+		if (otherPlayer != null)
+			camera.position.set(otherPlayer.getPosition().x, otherPlayer.getPosition().y, 0);	
 		
 		camera.update();
 		batch.setProjectionMatrix(camera.combined);
@@ -52,14 +55,13 @@ public class World {
 		// Draw map
 		map.draw(batch);
 		
-		gameObjects.forEach((k,v)->{
-			v.draw(batch);
-		});
+		for (GameObject value : gameObjects.values()) {
+			value.draw(batch);
+		}
 		
-		gameActors.forEach((k,v)->{
-			v.draw(batch);
-		});
-
+		for (Actor value : gameActors.values()) {
+			value.draw();
+		}
 
 		batch.end();
 	}
@@ -70,11 +72,13 @@ public class World {
 		return spawnPoints[value];
 	}
 	
-	public void playerInit(String id, float x, float y, TextureAtlas textureTest, TextureAtlas etatFeu)
+	public void playerInit(String id, float x, float y, HashMap<String, TextureAtlas> textures)
 	{
-		this.player = new Player(id, x, y, textureTest, etatFeu, playerHitbox);
+		/*this.player = new Player(id, x,y, textures, playerHitbox);
 		player.setMapRef(map);
-		gameObjects.put(id, player);
+		gameObjects.put(id, player);*/
+		otherPlayer = new com.fdl.actors.Player(id, x, y, map, batch, hitboxRenderer, textures);
+		gameActors.put(id, otherPlayer);
 	}
 	
 	public void sceneCharacterInit(String id, float x, float y, HashMap<String, TextureAtlas> textures)
@@ -95,12 +99,17 @@ public class World {
 	
 	public void removeCharacter(String id)
 	{
+		gameObjects.remove(id);
 		gameActors.remove(id);
 	}
 	
 	public Player getPlayer()
 	{
 		return player;
+	}
+	public com.fdl.actors.Player getOtherPlayer()
+	{
+		return otherPlayer;
 	}
 	public Map getMap()
 	{

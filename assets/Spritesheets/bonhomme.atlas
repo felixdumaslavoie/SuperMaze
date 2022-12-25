@@ -3,114 +3,142 @@ size: 2048, 2048
 format: RGBA8888
 filter: Linear,Linear
 repeat: none
-walkingdown
+poingdown
   rotate: false
   xy: 0, 0
+  size: 288, 272
+  orig: 288, 272
+  offset: 0, 0
+  index: 18
+poingleft
+  rotate: false
+  xy: 288, 0
+  size: 288, 272
+  orig: 288, 272
+  offset: 0, 0
+  index: 19
+poingright
+  rotate: false
+  xy: 576, 0
+  size: 288, 272
+  orig: 288, 272
+  offset: 0, 0
+  index: 16
+poingup
+  rotate: false
+  xy: 864, 0
+  size: 288, 272
+  orig: 288, 272
+  offset: 0, 0
+  index: 17
+walkingdown
+  rotate: false
+  xy: 1152, 0
   size: 320, 416
   orig: 320, 416
   offset: 0, 0
   index: 0
 walkingdown
   rotate: false
-  xy: 320, 0
+  xy: 1472, 0
   size: 320, 416
   orig: 320, 416
   offset: 0, 0
   index: 1
 walkingdown
   rotate: false
-  xy: 640, 0
+  xy: 0, 416
   size: 320, 416
   orig: 320, 416
   offset: 0, 0
   index: 2
 walkingdown
   rotate: false
-  xy: 960, 0
+  xy: 320, 416
   size: 320, 416
   orig: 320, 416
   offset: 0, 0
   index: 3
 walkingleft
   rotate: false
-  xy: 1280, 0
+  xy: 640, 416
   size: 320, 416
   orig: 320, 416
   offset: 0, 0
   index: 12
 walkingleft
   rotate: false
-  xy: 1600, 0
+  xy: 960, 416
   size: 320, 416
   orig: 320, 416
   offset: 0, 0
   index: 13
 walkingleft
   rotate: false
-  xy: 0, 416
+  xy: 1280, 416
   size: 320, 416
   orig: 320, 416
   offset: 0, 0
   index: 14
 walkingleft
   rotate: false
-  xy: 320, 416
+  xy: 1600, 416
   size: 320, 416
   orig: 320, 416
   offset: 0, 0
   index: 15
 walkingright
   rotate: false
-  xy: 640, 416
+  xy: 0, 832
   size: 320, 416
   orig: 320, 416
   offset: 0, 0
   index: 4
 walkingright
   rotate: false
-  xy: 960, 416
+  xy: 320, 832
   size: 320, 416
   orig: 320, 416
   offset: 0, 0
   index: 5
 walkingright
   rotate: false
-  xy: 1280, 416
+  xy: 640, 832
   size: 320, 416
   orig: 320, 416
   offset: 0, 0
   index: 6
 walkingright
   rotate: false
-  xy: 1600, 416
+  xy: 960, 832
   size: 320, 416
   orig: 320, 416
   offset: 0, 0
   index: 7
 walkingup
   rotate: false
-  xy: 0, 832
+  xy: 1280, 832
   size: 320, 416
   orig: 320, 416
   offset: 0, 0
   index: 8
 walkingup
   rotate: false
-  xy: 320, 832
+  xy: 1600, 832
   size: 320, 416
   orig: 320, 416
   offset: 0, 0
   index: 9
 walkingup
   rotate: false
-  xy: 640, 832
+  xy: 0, 1248
   size: 320, 416
   orig: 320, 416
   offset: 0, 0
   index: 10
 walkingup
   rotate: false
-  xy: 960, 832
+  xy: 320, 1248
   size: 320, 416
   orig: 320, 416
   offset: 0, 0

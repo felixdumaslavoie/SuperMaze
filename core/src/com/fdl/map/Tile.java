@@ -10,8 +10,8 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Tile {
 	static final public int WIDTH = 100;
-	static final Texture LAVE = new Texture(Gdx.files.internal("./stage/lave.png"));
-	static final Texture METAL = new Texture(Gdx.files.internal("./stage/metal.png"));
+	static final Texture LAVE = new Texture(Gdx.files.internal("stage/lave.png"));
+	static final Texture METAL = new Texture(Gdx.files.internal("stage/metal.png"));
 	
 	static public final char TILECODE_LAVA = 1;
 	static public final char TILECODE_METAL = 2;

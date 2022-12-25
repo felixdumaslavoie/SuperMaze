@@ -26,6 +26,9 @@ public class Actor {
 	protected TextureAtlas textureAtlas;
 	protected float stateTime;
 	
+	//Render
+	SpriteBatch batch;
+	
 	//Default sizes
 	private final int WIDTH = 120;
 	private final int HEIGHT = 150;
@@ -44,6 +47,9 @@ public class Actor {
 		this.position = new Vector2(x,y);
 		this.direction = 'u';
 		
+		//render
+		this.batch = batch;
+		
 		stateTime = 0;
 		textureAtlas = textures.get(Textures.BONHOMME_TEST);
 		currentAnimation = new Animation<TextureRegion> (0.033f, textureAtlas.findRegions("walkingup"), PlayMode.LOOP);
@@ -59,7 +65,7 @@ public class Actor {
 		return (dir.epsilonEquals(-1.0f,0.0f) || dir.epsilonEquals(1.0f,0.0f) || dir.epsilonEquals(0.0f,1.0f) || dir.epsilonEquals(0.0f,-1.0f));
 	}
 	
-	public void draw (SpriteBatch batch) {
+	public void draw () {
 		
 		// Find displacement direction
 		Vector2 dir = previousPosition.sub(position).nor();

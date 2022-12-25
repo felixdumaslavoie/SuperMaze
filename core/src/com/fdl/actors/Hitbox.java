@@ -13,16 +13,22 @@ public class Hitbox {
 	 
 	 private ShapeRenderer shapeRenderer;
 	 
+	 private boolean projectionMatrixSet;
+	 
 	 public Hitbox(Batch batch,ShapeRenderer shapeRenderer, float x, float y, float width, float height){
 		    
 			 this.batchRef = batch;
 			 this.shapeRenderer = shapeRenderer;
+			 projectionMatrixSet = false;
 	    	 shapeRenderer.setProjectionMatrix(batch.getProjectionMatrix());
 		     hitbox = new Rectangle(x,y, width,height);
 	    }
 	 
 	    public void draw(){
 	    	batchRef.end();
+        	if(!projectionMatrixSet){
+        		shapeRenderer.setProjectionMatrix(batchRef.getProjectionMatrix());
+        	}
 	        shapeRenderer.begin(ShapeType.Line);
 	        shapeRenderer.setColor(Color.LIGHT_GRAY);
 	        shapeRenderer.rect(hitbox.x, hitbox.y, hitbox.width, hitbox.height);

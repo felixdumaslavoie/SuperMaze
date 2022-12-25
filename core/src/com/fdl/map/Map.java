@@ -15,6 +15,13 @@ public class Map {
 	public static final int WIDTH = 50;
 	public static final int HEIGHT = 50;
 	
+	public static int getUpperBoundY () {
+		return HEIGHT * Tile.WIDTH;
+	}
+	
+	public static int getUpperBoundX () {
+		return WIDTH * Tile.WIDTH;
+	}
 	
 	public Map()
 	{

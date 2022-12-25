@@ -83,7 +83,7 @@ public class Engine extends ApplicationAdapter {
 		ScreenUtils.clear(0, 0, 0, 0);
 		world.render();
 		updateServer();
-		if (world.getPlayer() != null) 
+		if (world.getPlayer() != null || world.getOtherPlayer() != null) 
 		{
 			if (Hud.hitboxesState())
 			{
@@ -95,12 +95,12 @@ public class Engine extends ApplicationAdapter {
 	public void updateServer()
 	{
 		timer += Gdx.graphics.getDeltaTime();
-		if (timer >= UPDATE_TIME && world.getPlayer() != null && world.getPlayer().hasMoved())
+		if (timer >= UPDATE_TIME && world.getOtherPlayer() != null && world.getOtherPlayer().hasMoved())
 		{
 			JSONObject data = new JSONObject(); 
 			 try {
-				data.put("x", world.getPlayer().getPosition().x);
-				data.put("y", world.getPlayer().getPosition().y);
+				data.put("x", world.getOtherPlayer().getPosition().x);
+				data.put("y", world.getOtherPlayer().getPosition().y);
 				socket.emit("playerMoved", data);
 			 }catch (JSONException e) {
 				 Gdx.app.log("SocketIO", "Error sending update data.");
@@ -111,7 +111,8 @@ public class Engine extends ApplicationAdapter {
 	public void connectSocket()
 	{
 		try {
-			socket = IO.socket("http://localhost:3000");
+			//socket = IO.socket("http://localhost:3000");
+			socket = IO.socket("http://10.0.0.173:3000");
 			socket.connect();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -121,80 +122,111 @@ public class Engine extends ApplicationAdapter {
 	
 	public void configSocketEvents() {
 		
-		socket.on(Socket.EVENT_CONNECT, (args) -> {
-			Gdx.app.log("SocketIO", "Connected");
-		});
-		
-		socket.on("SocketID", (args) ->{
-			 try {
-				 JSONObject data = (JSONObject) args[0]; 
-				 String id = data.getString("id");
-				 float x = (float) data.getDouble("x");
-				 float y = (float) data.getDouble("y");
-				 Gdx.app.log("SocketIO", "MyID=" + id);
+		socket.on(Socket.EVENT_CONNECT, new Emitter.Listener()  {
 
-				 world.playerInit(id,x,y, textureTest, textureEtatFeu);
-				 hud = new Hud(world.getPlayer(), defaultFont);
-				 		 
-			 }catch (JSONException e) {
-				 Gdx.app.log("SocketIO", "Player position cannot be updated.");
-			 }
-		});
-		
-		socket.on("getPlayers", (args) ->
-		{
-			JSONArray objects = (JSONArray) args[0];
-			try {
-				for (int i = 0; i < objects.length(); i++) {
-					 String id = objects.getJSONObject(i).getString("id");
-					 float x = (float) objects.getJSONObject(i).getDouble("x");
-					 float y = (float) objects.getJSONObject(i).getDouble("y");
-					 world.sceneCharacterInit(id, x, y, textures);
-				}
+			@Override
+			public void call(Object... args) {
+				// TODO Auto-generated method stub
+				Gdx.app.log("SocketIO", "Connected");
 				
-			}catch(JSONException e)
-			{
-				System.out.println(e);
 			}
 		});
 		
-		socket.on("newPlayer", (args)->  {
-			 try {
-				 JSONObject data = (JSONObject) args[0]; 
-				 String id = data.getString("id");
-				 float x = (float) data.getDouble("x");
-				 float y = (float) data.getDouble("y");
-				 world.sceneCharacterInit(id, x, y, textures);
-			 }catch (JSONException e) {
-				 Gdx.app.log("SocketIO", "Player position cannot be updated.");
-			 }			
-		});
-		socket.on("playerMoved", (args)->  {
-			 try {
-				 JSONObject data = (JSONObject) args[0]; 
-				 String id = data.getString("id");
-				 float x = (float) data.getDouble("x");
-				 float y = (float) data.getDouble("y");
-				 Actor act = world.getActor(id);
-				 if (act != null) {
-					 act.updatePosition(new Vector2(x,y));
+		socket.on("SocketID", new Emitter.Listener() {
+
+			@Override
+			public void call(Object... args) {
+				 try {
+					 JSONObject data = (JSONObject) args[0]; 
+					 String id = data.getString("id");
+					 float x = (float) data.getDouble("x");
+					 float y = (float) data.getDouble("y");
+					 Gdx.app.log("SocketIO", "MyID=" + id);
+
+					 world.playerInit(id, x, y, textures);
+					 hud = new Hud(world.getOtherPlayer(), defaultFont);
+					 		 
+				 }catch (JSONException e) {
+					 Gdx.app.log("SocketIO", "Player position cannot be updated.");
 				 }
-			 }catch (JSONException e) {
-				 Gdx.app.log("SocketIO", "Player position cannot be updated.");
-			 }			
-		});		
+				
+			}});
+		
+		socket.on("getPlayers", new Emitter.Listener() {
+
+			@Override
+			public void call(Object... args) {
+				JSONArray objects = (JSONArray) args[0];
+				try {
+					for (int i = 0; i < objects.length(); i++) {
+						 String id = objects.getJSONObject(i).getString("id");
+						 float x = (float) objects.getJSONObject(i).getDouble("x");
+						 float y = (float) objects.getJSONObject(i).getDouble("y");
+						 world.sceneCharacterInit(id, x, y, textures);
+					}
+					
+				}catch(JSONException e)
+				{
+					System.out.println(e);
+				}
+				
+			}});
+		
+		socket.on("newPlayer",new Emitter.Listener() {
+
+			@Override
+			public void call(Object... args) {
+				 try {
+					 JSONObject data = (JSONObject) args[0]; 
+					 String id = data.getString("id");
+					 float x = (float) data.getDouble("x");
+					 float y = (float) data.getDouble("y");
+					 world.sceneCharacterInit(id, x, y, textures);
+				 }catch (JSONException e) {
+					 Gdx.app.log("SocketIO", "Player position cannot be updated.");
+				 }		
+				
+			}});
+			
+			
+		
+		socket.on("playerMoved",new Emitter.Listener() {
+
+			@Override
+			public void call(Object... args) {
+				 try {
+					 JSONObject data = (JSONObject) args[0]; 
+					 String id = data.getString("id");
+					 float x = (float) data.getDouble("x");
+					 float y = (float) data.getDouble("y");
+					 Actor act = world.getActor(id);
+					 if (act != null) {
+						 act.updatePosition(new Vector2(x,y));
+					 }
+				 }catch (JSONException e) {
+					 Gdx.app.log("SocketIO", "Player position cannot be updated.");
+				 }	
+				} 
+			});
+	
 		
 		
-		socket.on("playerDisconnected", (args) -> {
-			 try {
-				 JSONObject data = (JSONObject) args[0]; 
-				 String id = data.getString("id");
-				 world.removeCharacter(id);
-			 }catch (JSONException e) {
-				 Gdx.app.log("SocketIO", "Player position cannot be updated.");
-			 }				
-				});
-	}
+		socket.on("playerDisconnected", new Emitter.Listener() {
+
+			@Override
+			public void call(Object... args) {
+				// TODO Auto-generated method stub
+				 try {
+					 JSONObject data = (JSONObject) args[0]; 
+					 String id = data.getString("id");
+					 world.removeCharacter(id);
+				 }catch (JSONException e) {
+					 Gdx.app.log("SocketIO", "Player position cannot be updated.");
+				 }				
+			}});
+		}	
+				
+
 	
 	@Override
 	public void dispose () {

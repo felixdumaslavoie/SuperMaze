@@ -1,5 +1,7 @@
+
+
 buildscript {
-    
+	
 
     repositories {
         mavenLocal()
@@ -10,7 +12,6 @@ buildscript {
     }
     dependencies {
         
-
     }
 }
 
@@ -37,6 +38,8 @@ allprojects {
         maven { url "https://oss.sonatype.org/content/repositories/releases/" }
         maven { url "https://jitpack.io" }
     }
+    
+
 }
 
 project(":desktop") {
@@ -52,6 +55,9 @@ project(":desktop") {
         api "com.badlogicgames.gdx-controllers:gdx-controllers-desktop:$gdxControllersVersion"
         api "io.socket:socket.io-client:2.1.0"
     }
+    
+ 
+    
 }
 
 project(":core") {

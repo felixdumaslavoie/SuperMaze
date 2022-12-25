@@ -15,7 +15,7 @@ import com.fdl.game.HitBox;
 public class SceneCharacter extends Actor {
 	
 	public SceneCharacter(String id, float x, float y, SpriteBatch batch, ShapeRenderer shapeRenderer, HashMap<String, TextureAtlas> textures) {
-		super(id, y, y, batch, shapeRenderer, textures);
+		super(id, x, y, batch, shapeRenderer, textures);
 	}
 	
 	
