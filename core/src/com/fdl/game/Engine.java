@@ -1,20 +1,19 @@
 package com.fdl.game;
 
-import java.net.URISyntaxException;
 import java.util.HashMap;
-import java.util.Iterator;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
@@ -48,7 +47,6 @@ public class Engine extends ApplicationAdapter {
     private TextureAtlas textureEtatFeu;
     
     private BitmapFont defaultFont;
-    
     
 	@Override
 	public void create () {
@@ -112,7 +110,7 @@ public class Engine extends ApplicationAdapter {
 	{
 		try {
 			//socket = IO.socket("http://localhost:3000");
-			socket = IO.socket("http://10.0.0.173:3000");
+			socket = IO.socket("http://192.168.2.57:3000");
 			socket.connect();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -141,8 +139,11 @@ public class Engine extends ApplicationAdapter {
 					 String id = data.getString("id");
 					 float x = (float) data.getDouble("x");
 					 float y = (float) data.getDouble("y");
+					 JSONArray map = data.getJSONArray("map");
+					 
 					 Gdx.app.log("SocketIO", "MyID=" + id);
 
+					 world.mapInit(map);
 					 world.playerInit(id, x, y, textures);
 					 hud = new Hud(world.getOtherPlayer(), defaultFont);
 					 		 
@@ -227,12 +228,23 @@ public class Engine extends ApplicationAdapter {
 		}
 	
 	
-	public static Socket getSocket()
+	public static void playerDeadEvent()
 	{
-		return Engine.socket;
+		socket.emit("playerDead"); 
+	}
+	
+	public static void attack(Rectangle hitzone, String type)
+	{
+		JSONObject data = new JSONObject(); 
+		 try {
+			data.put("x", 100);
+			data.put("y", 100);
+			socket.emit("playerAttack", data);
+		 }catch (JSONException e) {
+			 Gdx.app.log("SocketIO", "Error sending update data.");
+		 }				
 	}
 				
-
 	
 	@Override
 	public void dispose () {

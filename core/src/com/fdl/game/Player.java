@@ -69,7 +69,7 @@ public class Player extends GameObject {
 		collisionRect.getRect().setPosition(this.position.x,this.position.y);
 	}
 
-	ArrayList<Character> collisions;
+	ArrayList<Integer> collisions;
 	
 	@Override
 	public void draw (SpriteBatch batch) {
@@ -112,7 +112,7 @@ public class Player extends GameObject {
 		}
 		
 		
-		if (collisions.contains(Tile.TILECODE_METAL) && isMoving)
+		if (collisions.contains(Textures.TILECODE_METAL) && isMoving)
 		{
 			if (elapsedTime - soundSpeedChecker > 0.4)
 			{
@@ -121,7 +121,7 @@ public class Player extends GameObject {
 			}
 		}
 		
-		if (collisions.contains(Tile.TILECODE_LAVA))
+		if (collisions.contains(Textures.TILECODE_LAVA))
 		{
 			this.lavaHit(25);
 		}

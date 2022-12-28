@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -15,6 +16,7 @@ import com.fdl.game.ressources.Textures;
 import com.fdl.gui.Hud;
 import com.fdl.map.Map;
 import com.fdl.map.Tile;
+import com.fdl.sound.SoundClass;
 import com.fdl.sound.SoundModule;
 
 public class Actor {
@@ -50,8 +52,16 @@ public class Actor {
 	
 	//Map
 	protected Map mapRef;
-	protected ArrayList<Character> collisions;
+	protected ArrayList<Integer> collisions;
+	
+	//Sounds
+	protected SoundClass sounds;
+	protected boolean pewPlaying;
 
+	//Time for walking sound effect.
+	//TODO: improve this shit
+	protected float elapsedTime = 0f;
+	private float soundSpeedChecker = 0;
 	
 	public Actor(String id, float x, float y, SpriteBatch batch, ShapeRenderer shapeRenderer, HashMap<String, TextureAtlas> textures, Map mapRef) {
 		this.id = id;
@@ -78,6 +88,10 @@ public class Actor {
 		defaultHitbox = new Hitbox(batch, shapeRenderer, x, y,DEFAULT_HITBOX_WIDTH, DEFAULT_HITBOX_HEIGHT);
 		
 		previousPosition = new Vector2(position);
+		
+		// Sounds
+		sounds = new SoundClass();
+		pewPlaying =false;
 	}
 	
 	public boolean vectorNormalNotZero (Vector2 dir) {
@@ -88,6 +102,12 @@ public class Actor {
 		
 		// Collisions test
 		collisions = mapRef.collisionWith(defaultHitbox.getRect());
+		
+		if (collisions.contains(Textures.TILECODE_METAL) && isMoving)
+		{
+				//SoundModule.playWalk("footstep_metal.mp3", 0.4f);
+				sounds.startLoop(SoundClass.METAL_FOOTSTEPS, 1);
+		}
 		
 		// Collision with map tiles correction
 		if (collisions.size() == 0)
@@ -113,7 +133,7 @@ public class Actor {
 			{
 				previousPosition.y = Map.getUpperBoundY() - 10;
 			}
-			SoundModule.playWalk("pew.wav");
+			sounds.play(SoundClass.PEW);
 			position = previousPosition.cpy();
 		}
 		
@@ -157,6 +177,7 @@ public class Actor {
 		if (!isMoving)
 		{
 			animationTime = 0;
+			sounds.stop(SoundClass.METAL_FOOTSTEPS);
 		}
 		
 		if (isMoving)
@@ -172,12 +193,20 @@ public class Actor {
 
 		batch.draw(currentFrame,  this.position.x - 35,  this.position.y -35, WIDTH, HEIGHT);
 		
-		if (collisions.contains(Tile.TILECODE_LAVA))
+		if (collisions.contains(Textures.TILECODE_LAVA))
 		{
 			stateAnimationTime += Gdx.graphics.getDeltaTime();
 			currentState = new Animation<TextureRegion> (0.050f, actorState.findRegions("fire"), PlayMode.LOOP);
 			currentFrame = currentState.getKeyFrame(stateAnimationTime, true);
 			batch.draw(currentFrame,  this.position.x - 35,  this.position.y -35, WIDTH, HEIGHT);
+
+			sounds.startLoop(SoundClass.PEW, 10);	
+			pewPlaying = true;
+			
+		}
+		else {
+			sounds.stop(SoundClass.PEW);
+			pewPlaying = false;
 		}
 		if (Hud.hitboxesState())
 		{
@@ -191,6 +220,11 @@ public class Actor {
 	public void updatePosition(Vector2 newPosition)
 	{
 		this.position = newPosition;
+	}
+	
+	
+	public void dispose() {
+		sounds.dispose();
 	}
 
 }

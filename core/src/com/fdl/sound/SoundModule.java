@@ -6,7 +6,6 @@ import com.badlogic.gdx.audio.Sound;
 public class SoundModule {
 	
 	static Sound channelWalk = Gdx.audio.newSound(Gdx.files.internal("sounds/"+ "pew.wav"));
-	
 	static Sound channelDamage = Gdx.audio.newSound(Gdx.files.internal("sounds/"+ "pew.wav"));
 	
 	static final float volumeFX = 0.025f;
@@ -53,6 +52,4 @@ public class SoundModule {
 	{
 		SoundModule.channelWalk.dispose();
 	}
-	
-
 }

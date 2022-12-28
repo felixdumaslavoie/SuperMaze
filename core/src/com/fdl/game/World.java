@@ -5,13 +5,17 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 
+import org.json.JSONArray;
+
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.fdl.actors.Actor;
 import com.fdl.actors.SceneCharacter;
+import com.fdl.game.ressources.Textures;
 import com.fdl.map.Map;
 import com.fdl.map.Tile;
 
@@ -23,16 +27,18 @@ public class World {
 	protected OrthographicCamera camera;
 	
 	private Player player;
-	private com.fdl.actors.Player otherPlayer;
+	private com.fdl.actors.Player mainPlayer;
 	
 	private HitBox playerHitbox;
 	private ShapeRenderer hitboxRenderer;
 	
 	private Vector2 spawnPoints[];
 	
+	private  HashMap<Integer, Texture> texturesCases;
+	
 	public World(SpriteBatch batch, OrthographicCamera camera) {
 		this.batch = batch;
-		map = new Map();
+		
 		hitboxRenderer = new ShapeRenderer();
 		gameObjects = new Hashtable<String, GameObject>();
 		gameActors = new HashMap<String, Actor>();
@@ -40,20 +46,30 @@ public class World {
 		
 		this.camera = camera;
 		camera.position.set(0, 0, 0);	
+		
+		texturesCases = new HashMap<Integer, Texture>();
+		texturesCases.put(Textures.TILECODE_LAVA, Textures.LAVE);
+		texturesCases.put(Textures.TILECODE_METAL, Textures.METAL);
+	}
+	
+	public void mapInit(JSONArray mapArray)
+	{
+		map = new Map(mapArray,texturesCases);
 	}
 	
 	public void render() {
 		if (player != null)
 			camera.position.set(player.getPosition().x, player.getPosition().y, 0);			
-		if (otherPlayer != null)
-			camera.position.set(otherPlayer.getPosition().x, otherPlayer.getPosition().y, 0);	
+		if (mainPlayer != null)
+			camera.position.set(mainPlayer.getPosition().x, mainPlayer.getPosition().y, 0);	
 		
 		camera.update();
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
 		
 		// Draw map
-		map.draw(batch);
+		if (map != null)
+			map.draw(batch);
 		
 		for (GameObject value : gameObjects.values()) {
 			value.draw(batch);
@@ -74,16 +90,12 @@ public class World {
 	
 	public void playerInit(String id, float x, float y, HashMap<String, TextureAtlas> textures)
 	{
-		/*this.player = new Player(id, x,y, textures, playerHitbox);
-		player.setMapRef(map);
-		gameObjects.put(id, player);*/
-		otherPlayer = new com.fdl.actors.Player(id, x, y, map, batch, hitboxRenderer, textures);
-		gameActors.put(id, otherPlayer);
+		mainPlayer = new com.fdl.actors.Player(id, x, y, map, batch, hitboxRenderer, textures);
+		gameActors.put(id, mainPlayer);
 	}
 	
 	public void sceneCharacterInit(String id, float x, float y, HashMap<String, TextureAtlas> textures)
 	{
-		//HitBox newHitbox = new HitBox(0,0, Player.HITBOX_HEIGHT, Player.HITBOX_WIDTH, hitboxRenderer);
 		gameActors.put(id, new SceneCharacter(id, x, y, batch, hitboxRenderer, textures, map));
 	}
 
@@ -99,7 +111,6 @@ public class World {
 	
 	public void removeCharacter(String id)
 	{
-		gameObjects.remove(id);
 		gameActors.remove(id);
 	}
 	
@@ -109,7 +120,7 @@ public class World {
 	}
 	public com.fdl.actors.Player getOtherPlayer()
 	{
-		return otherPlayer;
+		return mainPlayer;
 	}
 	public Map getMap()
 	{
