@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -15,9 +14,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.fdl.game.ressources.Textures;
 import com.fdl.gui.Hud;
 import com.fdl.map.Map;
-import com.fdl.map.Tile;
 import com.fdl.sound.SoundClass;
-import com.fdl.sound.SoundModule;
 
 public class Actor {
 	// Actor data
@@ -61,7 +58,6 @@ public class Actor {
 	//Time for walking sound effect.
 	//TODO: improve this shit
 	protected float elapsedTime = 0f;
-	private float soundSpeedChecker = 0;
 	
 	public Actor(String id, float x, float y, SpriteBatch batch, ShapeRenderer shapeRenderer, HashMap<String, TextureAtlas> textures, Map mapRef) {
 		this.id = id;
@@ -105,7 +101,6 @@ public class Actor {
 		
 		if (collisions.contains(Textures.TILECODE_METAL) && isMoving)
 		{
-				//SoundModule.playWalk("footstep_metal.mp3", 0.4f);
 				sounds.startLoop(SoundClass.METAL_FOOTSTEPS, 1);
 		}
 		
@@ -133,7 +128,6 @@ public class Actor {
 			{
 				previousPosition.y = Map.getUpperBoundY() - 10;
 			}
-			sounds.play(SoundClass.PEW);
 			position = previousPosition.cpy();
 		}
 		
@@ -151,7 +145,6 @@ public class Actor {
 		{
 			direction = 'u';
 			currentAnimation = new Animation<TextureRegion> (0.050f, textureAtlas.findRegions("walkingup"), PlayMode.LOOP);
-		
 		}
 		
 		if (dir.x == 0.0f && dir.y == 1.0f)

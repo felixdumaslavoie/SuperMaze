@@ -1,6 +1,5 @@
 package com.fdl.actors;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.badlogic.gdx.Gdx;
@@ -11,32 +10,22 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.fdl.game.Engine;
 import com.fdl.game.ressources.Textures;
-import com.fdl.gui.Hud;
 import com.fdl.io.Inputs;
 import com.fdl.map.Map;
-import com.fdl.map.Tile;
-import com.fdl.sound.SoundClass;
 import com.fdl.sound.SoundModule;
 
 public class Player extends Actor {
 	
 	protected Inputs inputs;
 	
-	
 	private float hp;
-	
-	private final int WIDTH = 120;
-	private final int HEIGHT = 150;
-	
-	private int spriteCorrectionX = 53;
-	private int spriteCorrectionY = 21;
 	
 	public static final int HITBOX_WIDTH = 16;
 	public static final int HITBOX_HEIGHT = 20;
-	
 	
 	private float speed;
 	
@@ -46,6 +35,9 @@ public class Player extends Actor {
 
 	protected boolean isMoving;
 	
+	// Tetris system
+	private Tetris tetris;
+	private Rectangle tetrisRect;
 	
 	public Player(String id, float x, float y, Map mapRef, SpriteBatch batch, ShapeRenderer hitBoxRenderer, HashMap<String, TextureAtlas> textures) {
 		super(id, x, y, batch, hitBoxRenderer, textures, mapRef);
@@ -66,20 +58,24 @@ public class Player extends Actor {
 		speed = 500;
 		
 		delayLavaHit = 0;
+		
+		// Tetris system
+		tetris = new Tetris(x, y, direction, batch, hitBoxRenderer);
+		tetrisRect = new Rectangle();
+		tetrisRect.x = x;
+		tetrisRect.y = y + 100;
 	}
 	
 	@Override
 	public void draw () {
 		super.draw();
-		
-		if (collisions.contains(Textures.TILECODE_LAVA))
-		{
-			this.lavaHit(25);
-		}
-		
+
 		if (Inputs.up())
 		{
-			if (!(collisions.size() == 0))
+			direction = 'u';
+			tetrisRect.x = position.x;
+			tetrisRect.y = position.y + 100;
+			if (!(collisions.size() == 0) && !collisions.contains(Textures.TILECODE_LAVA))
 			{				
 				this.position.y += speed * Gdx.graphics.getDeltaTime();	
 				isMoving = true;
@@ -88,6 +84,9 @@ public class Player extends Actor {
 		
 		if (Inputs.down())
 		{
+			direction = 'd';
+			tetrisRect.x = position.x;
+			tetrisRect.y = position.y - 100;
 			if (!(collisions.size() == 0))
 			{				
 				this.position.y -= speed * Gdx.graphics.getDeltaTime();
@@ -97,6 +96,9 @@ public class Player extends Actor {
 		
 		if (Inputs.left())
 		{
+			direction = 'l';
+			tetrisRect.x = position.x - 100;
+			tetrisRect.y = position.y;
 			if (!(collisions.size() == 0))
 			{	
 				this.position.x -= speed * Gdx.graphics.getDeltaTime();
@@ -105,6 +107,9 @@ public class Player extends Actor {
 		}
 		if (Inputs.right())
 		{
+			direction = 'r';
+			tetrisRect.x = position.x + 100;
+			tetrisRect.y = position.y;
 			if (!(collisions.size() == 0))
 			{	
 				this.position.x += speed * Gdx.graphics.getDeltaTime();
@@ -116,7 +121,9 @@ public class Player extends Actor {
 		{
 			resetPlayer();
 		}
-	
+
+		// Tetris things
+		tetris.draw(mapRef.collisionZone(tetrisRect), direction);
 	}
 	
 	

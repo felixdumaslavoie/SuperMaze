@@ -15,7 +15,6 @@ import com.fdl.game.ressources.Textures;
 import com.fdl.gui.Hud;
 import com.fdl.io.Inputs;
 import com.fdl.map.Map;
-import com.fdl.map.Tile;
 import com.fdl.sound.SoundModule;
 
 public class Player extends GameObject {
@@ -28,9 +27,6 @@ public class Player extends GameObject {
 	
 	private final int WIDTH = 120;
 	private final int HEIGHT = 150;
-
-	private int tw;
-	private int th;
 	
 	public static final int HITBOX_WIDTH = 16;
 	public static final int HITBOX_HEIGHT = 20;
@@ -56,8 +52,6 @@ public class Player extends GameObject {
 		currentFrame = currentAnimation.getKeyFrame(stateTime, true);
 		isMoving = false;
 		
-		tw = currentFrame.getRegionWidth();
-		th = currentFrame.getRegionHeight();
 		collisionRect = hb;
 		
 		prevx =0;

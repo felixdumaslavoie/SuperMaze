@@ -110,4 +110,20 @@ public class Map {
 		}
 		return tilesCollisions;
 	}
+	
+	public ArrayList<Tile> collisionZone(Rectangle rect)
+	{
+		ArrayList<Tile> tilesCollisions = new ArrayList<Tile>();
+		int collidesWith;
+		for (Tile tile : mapTiles) {
+			collidesWith = tile.collides(rect);
+			if(collidesWith != 0)
+			{
+				tilesCollisions.add(tile);
+			}
+		}
+		return tilesCollisions;
+	}
+	
+	
 }

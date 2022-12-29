@@ -45,6 +45,11 @@ public class Inputs extends InputAdapter  {
 			Hud.toggleHitboxes();
 		}
 		
+		if (keycode == Keys.SPACE)
+		{
+			
+		}
+		
 		return super.keyDown(keycode);
 	}
 	

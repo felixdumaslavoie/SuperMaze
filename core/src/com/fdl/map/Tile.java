@@ -3,7 +3,6 @@ package com.fdl.map;
 import java.io.FileNotFoundException;
 import java.util.HashMap;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
@@ -14,9 +13,9 @@ public class Tile {
 	protected int type;
 	private Texture texture;
 	
-	protected Rectangle rect;
+	public static final int DEFAULT_WIDTH = 150;
 	protected int WIDTH = 150;
-	protected static final int DEFAULT_WIDTH = 150;
+	protected Rectangle rect;
 
 	
 	public Tile(float x, float y, int tileCode, int width, HashMap<Integer,Texture> texturesTiles) throws FileNotFoundException {
@@ -36,10 +35,15 @@ public class Tile {
 			throw new FileNotFoundException("Impossible de trouver l'image de tuile " + this.type);
 		}
 	}
+	
+	public Rectangle getRect()
+	{
+		return this.rect;
+	}
 
 	
 	public void draw(SpriteBatch batch) {
-		batch.draw(texture,rect.x,rect.y,WIDTH,WIDTH);
+		batch.draw(texture,rect.x,rect.y, WIDTH, WIDTH);
 	}
 
 	public char collides(Rectangle rect)
