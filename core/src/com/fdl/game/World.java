@@ -1,5 +1,6 @@
 package com.fdl.game;
 
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -25,8 +26,7 @@ public class World {
 	private HashMap<String, Actor> gameActors;
 	protected Map map;
 	protected OrthographicCamera camera;
-	
-	private Player player;
+
 	private com.fdl.actors.Player mainPlayer;
 	
 	private HitBox playerHitbox;
@@ -42,7 +42,6 @@ public class World {
 		hitboxRenderer = new ShapeRenderer();
 		gameObjects = new Hashtable<String, GameObject>();
 		gameActors = new HashMap<String, Actor>();
-		playerHitbox = new HitBox(0,0, Player.HITBOX_HEIGHT, Player.HITBOX_WIDTH, hitboxRenderer);
 		
 		this.camera = camera;
 		camera.position.set(0, 0, 0);	
@@ -57,9 +56,7 @@ public class World {
 		map = new Map(mapArray,texturesCases);
 	}
 	
-	public void render() {
-		if (player != null)
-			camera.position.set(player.getPosition().x, player.getPosition().y, 0);			
+	public void render() {		
 		if (mainPlayer != null)
 			camera.position.set(mainPlayer.getPosition().x, mainPlayer.getPosition().y, 0);	
 		
@@ -114,10 +111,6 @@ public class World {
 		gameActors.remove(id);
 	}
 	
-	public Player getPlayer()
-	{
-		return player;
-	}
 	public com.fdl.actors.Player getOtherPlayer()
 	{
 		return mainPlayer;
@@ -135,5 +128,10 @@ public class World {
 	public void dispose() {
 		batch.dispose();
 	}
-	
+
+	public void addTile(Point p) {
+		// TODO Auto-generated method stub
+		map.changeTile(p);
+	}
+
 }

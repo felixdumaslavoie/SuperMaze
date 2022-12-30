@@ -2,23 +2,17 @@ package com.fdl.io;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
-import com.fdl.game.Player;
 import com.fdl.gui.Hud;
 import com.badlogic.gdx.InputAdapter;
 
 public class Inputs extends InputAdapter  {
 
-	Player playerRef;
-	com.fdl.actors.Player otherPlayer;
+	com.fdl.actors.Player player;
 	
-	public Inputs(Player player) {
-		playerRef =player;
-		// TODO Auto-generated constructor stub
-	}
+
 	
 	public Inputs(com.fdl.actors.Player player) {
-		otherPlayer =player;
-		// TODO Auto-generated constructor stub
+		this.player =player;
 	}
 
 	public static boolean up() {
@@ -47,7 +41,7 @@ public class Inputs extends InputAdapter  {
 		
 		if (keycode == Keys.SPACE)
 		{
-			
+			player.tetrisSend();
 		}
 		
 		return super.keyDown(keycode);
@@ -56,14 +50,14 @@ public class Inputs extends InputAdapter  {
 	
 	@Override
 	public boolean keyUp(int keycode) {
-		if (playerRef != null)
+		if (player != null)
 		{
-			playerRef.stopAnimation();			
+			player.stopAnimation();			
 		}
 		
-		if (otherPlayer != null)
+		if (player != null)
 		{
-			otherPlayer.stopAnimation();
+			player.stopAnimation();
 		}
 		
 		return super.keyUp(keycode);

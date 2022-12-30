@@ -1,5 +1,6 @@
 package com.fdl.actors;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.badlogic.gdx.Gdx;
@@ -16,6 +17,7 @@ import com.fdl.game.Engine;
 import com.fdl.game.ressources.Textures;
 import com.fdl.io.Inputs;
 import com.fdl.map.Map;
+import com.fdl.map.Tile;
 import com.fdl.sound.SoundModule;
 
 public class Player extends Actor {
@@ -60,7 +62,7 @@ public class Player extends Actor {
 		delayLavaHit = 0;
 		
 		// Tetris system
-		tetris = new Tetris(x, y, direction, batch, hitBoxRenderer);
+		tetris = new Tetris(x, y, direction, batch, hitBoxRenderer, mapRef);
 		tetrisRect = new Rectangle();
 		tetrisRect.x = x;
 		tetrisRect.y = y + 100;
@@ -75,7 +77,7 @@ public class Player extends Actor {
 			direction = 'u';
 			tetrisRect.x = position.x;
 			tetrisRect.y = position.y + 100;
-			if (!(collisions.size() == 0) && !collisions.contains(Textures.TILECODE_LAVA))
+			if (!(collisions.size() == 0))
 			{				
 				this.position.y += speed * Gdx.graphics.getDeltaTime();	
 				isMoving = true;
@@ -122,8 +124,22 @@ public class Player extends Actor {
 			resetPlayer();
 		}
 
+		
+		ArrayList<Tile> colls = new ArrayList<Tile>();
 		// Tetris things
-		tetris.draw(mapRef.collisionZone(tetrisRect), direction);
+		if (!position.equals(this.previousPosition))
+		{
+			ArrayList<Rectangle> arrgh = new ArrayList<Rectangle>();
+			arrgh.add(tetrisRect);
+			colls = mapRef.collisionZone(arrgh);
+		}
+		
+		tetris.draw(colls, direction);
+	}
+	
+	public void tetrisSend()
+	{
+		Engine.addingTiles(tetris.getGridCollisions());
 	}
 	
 	

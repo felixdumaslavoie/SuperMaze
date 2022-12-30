@@ -1,5 +1,6 @@
 package com.fdl.map;
 
+import java.awt.Point;
 import java.io.FileNotFoundException;
 import java.util.HashMap;
 
@@ -16,13 +17,15 @@ public class Tile {
 	public static final int DEFAULT_WIDTH = 150;
 	protected int WIDTH = 150;
 	protected Rectangle rect;
+	protected Point position;
 
 	
-	public Tile(float x, float y, int tileCode, int width, HashMap<Integer,Texture> texturesTiles) throws FileNotFoundException {
+	public Tile(float x, float y, int tileCode, int width, HashMap<Integer,Texture> texturesTiles, Point position) throws FileNotFoundException {
 		WIDTH = width;
 		rect = new Rectangle(x, y, WIDTH, WIDTH);
 		
 		this.type = tileCode;
+		this.position = position;
 		
 		switch (this.type) {
 		case Textures.TILECODE_LAVA:
@@ -59,8 +62,17 @@ public class Tile {
 		return 0;
 	}
 	
+	public Point getPositionInGrid() {
+		return this.position;
+	}
+	
 	public int getType()
 	{
 		return this.type;
+	}
+	
+	public void setType(int newType)
+	{
+		this.type = newType;
 	}
 }

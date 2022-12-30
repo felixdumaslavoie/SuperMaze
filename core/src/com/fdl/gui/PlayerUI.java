@@ -2,7 +2,8 @@ package com.fdl.gui;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.fdl.game.Player;
+import com.fdl.actors.Player;
+
 
 public class PlayerUI {
 	

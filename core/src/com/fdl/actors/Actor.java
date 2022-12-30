@@ -22,8 +22,8 @@ public class Actor {
 	protected Vector2 position;
 	protected Vector2 previousPosition;
 	protected char direction;
-	
-	//Animation
+
+	// Animation
 	protected TextureRegion currentFrame;
 	protected TextureAtlas textureAtlas;
 	protected Animation<TextureRegion> currentAnimation;
@@ -31,191 +31,178 @@ public class Actor {
 	protected TextureAtlas actorState;
 	protected Animation<TextureRegion> currentState;
 	protected float stateAnimationTime;
-	
-	//Is moving
+
+	// Is moving
 	boolean isMoving;
-	
-	//Render
+
+	// Render
 	SpriteBatch batch;
-	
-	//Default sizes
+
+	// Default sizes
 	private final int WIDTH = 120;
 	private final int HEIGHT = 150;
-	
-	//Hitboxes
+
+	// Hitboxes
 	protected Hitbox defaultHitbox;
 	public final float DEFAULT_HITBOX_WIDTH = 16;
 	public final float DEFAULT_HITBOX_HEIGHT = 20;
-	
-	//Map
+
+	// Map
 	protected Map mapRef;
 	protected ArrayList<Integer> collisions;
-	
-	//Sounds
+
+	// Sounds
 	protected SoundClass sounds;
 	protected boolean pewPlaying;
 
-	//Time for walking sound effect.
-	//TODO: improve this shit
+	// Time for walking sound effect.
+	// TODO: improve this shit
 	protected float elapsedTime = 0f;
-	
-	public Actor(String id, float x, float y, SpriteBatch batch, ShapeRenderer shapeRenderer, HashMap<String, TextureAtlas> textures, Map mapRef) {
+
+	public Actor(String id, float x, float y, SpriteBatch batch, ShapeRenderer shapeRenderer,
+			HashMap<String, TextureAtlas> textures, Map mapRef) {
 		this.id = id;
-		this.position = new Vector2(x,y);
+		this.position = new Vector2(x, y);
 		this.direction = 'u';
-		
-		//render
+
+		// render
 		this.batch = batch;
-		
-		//Map
+
+		// Map
 		this.mapRef = mapRef;
-		
-		//Animation
+
+		// Animation
 		animationTime = 0;
 		stateAnimationTime = 0;
 		textureAtlas = textures.get(Textures.BONHOMME_TEST);
-		
+
 		actorState = textures.get(Textures.ETAT_FEU);
-		
-		currentAnimation = new Animation<TextureRegion> (0.033f, textureAtlas.findRegions("walkingup"), PlayMode.LOOP);
-		
+
+		currentAnimation = new Animation<TextureRegion>(0.033f, textureAtlas.findRegions("walkingup"), PlayMode.LOOP);
+
 		currentFrame = currentAnimation.getKeyFrame(animationTime, true);
-		
-		defaultHitbox = new Hitbox(batch, shapeRenderer, x, y,DEFAULT_HITBOX_WIDTH, DEFAULT_HITBOX_HEIGHT);
-		
+
+		defaultHitbox = new Hitbox(batch, shapeRenderer, x, y, DEFAULT_HITBOX_WIDTH, DEFAULT_HITBOX_HEIGHT);
+
 		previousPosition = new Vector2(position);
-		
+
 		// Sounds
 		sounds = new SoundClass();
-		pewPlaying =false;
+		pewPlaying = false;
 	}
-	
-	public boolean vectorNormalNotZero (Vector2 dir) {
-		return (dir.epsilonEquals(-1.0f,0.0f) || dir.epsilonEquals(1.0f,0.0f) || dir.epsilonEquals(0.0f,1.0f) || dir.epsilonEquals(0.0f,-1.0f));
+
+	public boolean vectorNormalNotZero(Vector2 dir) {
+		return (dir.epsilonEquals(-1.0f, 0.0f) || dir.epsilonEquals(1.0f, 0.0f) || dir.epsilonEquals(0.0f, 1.0f)
+				|| dir.epsilonEquals(0.0f, -1.0f));
 	}
-	
-	public void draw () {
-		
+
+	public void draw() {
+
 		// Collisions test
 		collisions = mapRef.collisionWith(defaultHitbox.getRect());
-		
-		if (collisions.contains(Textures.TILECODE_METAL) && isMoving)
-		{
-				sounds.startLoop(SoundClass.METAL_FOOTSTEPS, 1);
+
+		if (collisions.contains(Textures.TILECODE_METAL) && isMoving) {
+			sounds.startLoop(SoundClass.METAL_FOOTSTEPS, 1);
 		}
-		
+
 		// Collision with map tiles correction
-		if (collisions.size() == 0)
-		{
+		if (collisions.size() == 0) {
 			position = previousPosition.cpy();
 		}
-		
+
 		// New collision system
-		if (position.x <= 0 || position.y <= 0 || position.x >= Map.getUpperBoundX() || position.y >= Map.getUpperBoundY())
-		{
+		if (position.x <= 0 || position.y <= 0 || position.x >= Map.getUpperBoundX()
+				|| position.y >= Map.getUpperBoundY()) {
 			if (previousPosition.x <= 0) {
 				previousPosition.x = 5;
 			}
 			if (previousPosition.y <= 0) {
 				previousPosition.y = 5;
 			}
-			
-			if (previousPosition.x >= Map.getUpperBoundX())
-			{
+
+			if (previousPosition.x >= Map.getUpperBoundX()) {
 				previousPosition.x = Map.getUpperBoundX() - 10;
 			}
-			if (previousPosition.y >= Map.getUpperBoundY())
-			{
+			if (previousPosition.y >= Map.getUpperBoundY()) {
 				previousPosition.y = Map.getUpperBoundY() - 10;
 			}
 			position = previousPosition.cpy();
 		}
-		
-		
+
 		// Find displacement direction
 		Vector2 dir = previousPosition.sub(position).nor();
-		
+
 		isMoving = false;
-		if (vectorNormalNotZero(dir))
-		{
+		if (vectorNormalNotZero(dir)) {
 			isMoving = true;
 		}
-		
-		if (dir.x == 0.0f && dir.y == -1.0f)
-		{
+
+		if (dir.x == 0.0f && dir.y == -1.0f) {
 			direction = 'u';
-			currentAnimation = new Animation<TextureRegion> (0.050f, textureAtlas.findRegions("walkingup"), PlayMode.LOOP);
-		}
-		
-		if (dir.x == 0.0f && dir.y == 1.0f)
-		{
-			direction = 'd';
-			currentAnimation = new Animation<TextureRegion> (0.050f, textureAtlas.findRegions("walkingdown"), PlayMode.LOOP);
-			
-		}
-		
-		if (dir.x == 1.0f && dir.y == 0.0f)
-		{
-			direction = 'l';
-			currentAnimation = new Animation<TextureRegion> (0.050f, textureAtlas.findRegions("walkingleft"), PlayMode.LOOP);
+			currentAnimation = new Animation<TextureRegion>(0.050f, textureAtlas.findRegions("walkingup"),
+					PlayMode.LOOP);
 		}
 
-		if (dir.x == -1.0f && dir.y == 0.0f)
-		{
-			direction = 'r';
-			currentAnimation = new Animation<TextureRegion> (0.050f, textureAtlas.findRegions("walkingright"), PlayMode.LOOP);
+		if (dir.x == 0.0f && dir.y == 1.0f) {
+			direction = 'd';
+			currentAnimation = new Animation<TextureRegion>(0.050f, textureAtlas.findRegions("walkingdown"),
+					PlayMode.LOOP);
+
 		}
-		
-		
-		if (!isMoving)
-		{
+
+		if (dir.x == 1.0f && dir.y == 0.0f) {
+			direction = 'l';
+			currentAnimation = new Animation<TextureRegion>(0.050f, textureAtlas.findRegions("walkingleft"),
+					PlayMode.LOOP);
+		}
+
+		if (dir.x == -1.0f && dir.y == 0.0f) {
+			direction = 'r';
+			currentAnimation = new Animation<TextureRegion>(0.050f, textureAtlas.findRegions("walkingright"),
+					PlayMode.LOOP);
+		}
+
+		if (!isMoving) {
 			animationTime = 0;
 			sounds.stop(SoundClass.METAL_FOOTSTEPS);
 		}
-		
-		if (isMoving)
-		{
+
+		if (isMoving) {
 			previousPosition.x = position.x;
 			previousPosition.y = position.y;
 			animationTime += Gdx.graphics.getDeltaTime(); // Accumulate elapsed animation time
 		}
-		
+
 		currentFrame = currentAnimation.getKeyFrame(animationTime, true);
-		
+
 		defaultHitbox.setPosition(this.position.x, this.position.y);
 
-		batch.draw(currentFrame,  this.position.x - 35,  this.position.y -35, WIDTH, HEIGHT);
-		
-		if (collisions.contains(Textures.TILECODE_LAVA))
-		{
-			stateAnimationTime += Gdx.graphics.getDeltaTime();
-			currentState = new Animation<TextureRegion> (0.050f, actorState.findRegions("fire"), PlayMode.LOOP);
-			currentFrame = currentState.getKeyFrame(stateAnimationTime, true);
-			batch.draw(currentFrame,  this.position.x - 35,  this.position.y -35, WIDTH, HEIGHT);
+		batch.draw(currentFrame, this.position.x - 35, this.position.y - 35, WIDTH, HEIGHT);
 
-			sounds.startLoop(SoundClass.PEW, 10);	
+		if (collisions.contains(Textures.TILECODE_LAVA)) {
+			stateAnimationTime += Gdx.graphics.getDeltaTime();
+			currentState = new Animation<TextureRegion>(0.050f, actorState.findRegions("fire"), PlayMode.LOOP);
+			currentFrame = currentState.getKeyFrame(stateAnimationTime, true);
+			batch.draw(currentFrame, this.position.x - 35, this.position.y - 35, WIDTH, HEIGHT);
+
+			sounds.startLoop(SoundClass.PEW, 10);
 			pewPlaying = true;
-			
-		}
-		else {
+
+		} else {
 			sounds.stop(SoundClass.PEW);
 			pewPlaying = false;
 		}
-		if (Hud.hitboxesState())
-		{
+		if (Hud.hitboxesState()) {
 			defaultHitbox.draw();
 		}
-		
+
 		previousPosition = this.position.cpy();
 	}
-	
-	
-	public void updatePosition(Vector2 newPosition)
-	{
+
+	public void updatePosition(Vector2 newPosition) {
 		this.position = newPosition;
 	}
-	
-	
+
 	public void dispose() {
 		sounds.dispose();
 	}

@@ -1,5 +1,7 @@
 package com.fdl.game;
 
+import java.awt.Point;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.json.JSONArray;
@@ -81,7 +83,7 @@ public class Engine extends ApplicationAdapter {
 		ScreenUtils.clear(0, 0, 0, 0);
 		world.render();
 		updateServer();
-		if (world.getPlayer() != null || world.getOtherPlayer() != null) 
+		if (world.getOtherPlayer() != null) 
 		{
 			if (Hud.hitboxesState())
 			{
@@ -210,6 +212,26 @@ public class Engine extends ApplicationAdapter {
 				} 
 			});
 	
+		socket.on("tilesAdded",new Emitter.Listener() {
+
+			@Override
+			public void call(Object... args) {
+				 try {
+					 JSONArray array = (JSONArray) args[0]; 
+					 
+					 for (int i = 0; i < array.length(); i++) {
+						JSONObject obj = (JSONObject) array.get(i);
+							int x = obj.getInt("x");
+							int y = obj.getInt("y");
+							world.addTile(new Point(x,y));
+					}
+					 
+				 }catch (JSONException e) {
+					 Gdx.app.log("SocketIO", "Player position cannot be updated.");
+				 }	
+				} 
+			});
+	
 		
 		
 		socket.on("playerDisconnected", new Emitter.Listener() {
@@ -232,6 +254,25 @@ public class Engine extends ApplicationAdapter {
 	{
 		socket.emit("playerDead"); 
 	}
+	
+	public static void addingTiles(ArrayList<Point> collisionsDansLaGrid)
+	{
+		JSONArray array = new JSONArray();
+		 try {
+			 JSONObject pointInGrid;
+			 for (Point point : collisionsDansLaGrid) {
+				 pointInGrid = new JSONObject();
+				 pointInGrid.put("x", point.x);
+				 pointInGrid.put("y", point.y);
+				 array.put(pointInGrid);				 
+			}
+			socket.emit("addingTiles", array);
+		 }catch (JSONException e) {
+			 Gdx.app.log("SocketIO", "Error sending tile update data to the server.");
+		 }				
+		
+	}
+	
 	
 	public static void attack(Rectangle hitzone, String type)
 	{
