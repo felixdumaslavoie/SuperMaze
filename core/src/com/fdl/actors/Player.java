@@ -40,6 +40,10 @@ public class Player extends Actor {
 	// Tetris system
 	private Tetris tetris;
 	private Rectangle tetrisRect;
+	private int blocksRemaining;
+	
+	// Collision system
+	private ArrayList<Integer> nextCollision; 
 	
 	public Player(String id, float x, float y, Map mapRef, SpriteBatch batch, ShapeRenderer hitBoxRenderer, HashMap<String, TextureAtlas> textures) {
 		super(id, x, y, batch, hitBoxRenderer, textures, mapRef);
@@ -71,13 +75,22 @@ public class Player extends Actor {
 	@Override
 	public void draw () {
 		super.draw();
-
+		
+		float potentialMovement = speed * Gdx.graphics.getDeltaTime();	
+		Rectangle nextPosition = new Rectangle(defaultHitbox.getRect());
+		
 		if (Inputs.up())
 		{
 			direction = 'u';
 			tetrisRect.x = position.x;
 			tetrisRect.y = position.y + 100;
-			if (!(collisions.size() == 0))
+			
+			
+			nextPosition.y += potentialMovement;
+			nextCollision = mapRef.collisionWith(nextPosition);
+			
+			
+			if (!(collisions.size() == 0) && !nextCollision.contains(Tile.TILECODE_LAVA))
 			{				
 				this.position.y += speed * Gdx.graphics.getDeltaTime();	
 				isMoving = true;
@@ -89,9 +102,13 @@ public class Player extends Actor {
 			direction = 'd';
 			tetrisRect.x = position.x;
 			tetrisRect.y = position.y - 100;
-			if (!(collisions.size() == 0))
+			
+			nextPosition.y -= potentialMovement;
+			nextCollision = mapRef.collisionWith(nextPosition);
+			
+			if (!(collisions.size() == 0)  && !nextCollision.contains(Tile.TILECODE_LAVA))
 			{				
-				this.position.y -= speed * Gdx.graphics.getDeltaTime();
+				this.position.y -= potentialMovement;
 				isMoving = true;
 			}
 		}
@@ -101,9 +118,13 @@ public class Player extends Actor {
 			direction = 'l';
 			tetrisRect.x = position.x - 100;
 			tetrisRect.y = position.y;
-			if (!(collisions.size() == 0))
+			
+			nextPosition.x -= potentialMovement;
+			nextCollision = mapRef.collisionWith(nextPosition);
+			
+			if (!(collisions.size() == 0) && !nextCollision.contains(Tile.TILECODE_LAVA))
 			{	
-				this.position.x -= speed * Gdx.graphics.getDeltaTime();
+				this.position.x -= potentialMovement;
 				isMoving = true;
 			}
 		}
@@ -112,9 +133,13 @@ public class Player extends Actor {
 			direction = 'r';
 			tetrisRect.x = position.x + 100;
 			tetrisRect.y = position.y;
-			if (!(collisions.size() == 0))
+			
+			nextPosition.x += potentialMovement;
+			nextCollision = mapRef.collisionWith(nextPosition);
+			
+			if (!(collisions.size() == 0) && !nextCollision.contains(Tile.TILECODE_LAVA))
 			{	
-				this.position.x += speed * Gdx.graphics.getDeltaTime();
+				this.position.x += potentialMovement;
 				isMoving = true;
 			}
 		}

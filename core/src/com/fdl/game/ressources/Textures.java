@@ -17,6 +17,10 @@ public class Textures {
 	// Textures pour la carte de jeu
 	public static final Texture LAVE = new Texture(Gdx.files.internal("stage/lave.png"));
 	public static final Texture METAL = new Texture(Gdx.files.internal("stage/metal.png"));
+
+	public static final Texture HP_LIFE_FULL = new Texture(Gdx.files.internal("objects/life/life_full.png"));
+	public static final Texture HP_LIFE_HALF = new Texture(Gdx.files.internal("objects/life/life_half.png"));
+	public static final Texture HP_LIFE_EMPTY = new Texture(Gdx.files.internal("objects/life/life_empty.png"));
 	
 	static public final int TILECODE_LAVA = 1;
 	static public final int TILECODE_METAL = 2;

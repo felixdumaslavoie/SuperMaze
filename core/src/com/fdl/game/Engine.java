@@ -22,7 +22,9 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.fdl.actors.Actor;
 import com.fdl.game.ressources.Fonts;
 import com.fdl.game.ressources.Textures;
+import com.fdl.game.ressources.TexturesCodes;
 import com.fdl.gui.Hud;
+import com.fdl.gui.PlayerUI;
 import com.fdl.sound.SoundModule;
 
 import io.socket.client.IO;
@@ -38,6 +40,7 @@ public class Engine extends ApplicationAdapter {
     private SpriteBatch batch;
 
     private Hud hud;
+    private PlayerUI playerUI;
     
     private static Socket socket;
     
@@ -45,10 +48,13 @@ public class Engine extends ApplicationAdapter {
     private float timer;
     
     private  HashMap<String, TextureAtlas> textures;
+    private  HashMap<Integer, Texture> texturesUI;
     private TextureAtlas textureTest; // Texture du bonhomme de tests
     private TextureAtlas textureEtatFeu;
     
+    private Fonts fontObject;
     private BitmapFont defaultFont;
+    
     
 	@Override
 	public void create () {
@@ -56,13 +62,23 @@ public class Engine extends ApplicationAdapter {
         mainCamera = new OrthographicCamera();
         viewport = new ExtendViewport(800, 600, mainCamera);
         
+        fontObject = new Fonts();
         defaultFont = Fonts.defaultFont;
         textureTest = Textures.textureTest;
         textureEtatFeu = Textures.textureFeu;
+        
+        
        
         textures = new HashMap<String, TextureAtlas>();
         textures.put(Textures.BONHOMME_TEST, textureTest);
         textures.put(Textures.ETAT_FEU, textureEtatFeu);
+       
+        //UI
+        texturesUI = new HashMap<Integer, Texture>();
+        texturesUI.put(TexturesCodes.CODE_HP_LIFE_FULL, Textures.HP_LIFE_FULL);
+        texturesUI.put(TexturesCodes.CODE_HP_LIFE_HALF, Textures.HP_LIFE_HALF);
+        texturesUI.put(TexturesCodes.CODE_HP_LIFE_EMPTY, Textures.HP_LIFE_EMPTY);
+       
         
 		world = new World(batch, mainCamera);	
 		
@@ -74,6 +90,7 @@ public class Engine extends ApplicationAdapter {
 	@Override
 	public void resize(int width, int height) {
 	    viewport.update(width, height, true);
+	    defaultFont = fontObject.regenFontSize(width / 35);
 	    batch.setProjectionMatrix(mainCamera.combined);
 	}
 	
@@ -89,6 +106,10 @@ public class Engine extends ApplicationAdapter {
 			{
 				hud.render(batch);			
 			}
+		}
+		if (playerUI != null)
+		{
+			playerUI.render(batch);			
 		}
 	}
 	
@@ -112,7 +133,7 @@ public class Engine extends ApplicationAdapter {
 	{
 		try {
 			//socket = IO.socket("http://localhost:3000");
-			socket = IO.socket("http://192.168.2.57:3000");
+			socket = IO.socket("http://localhost:3000");
 			socket.connect();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -148,6 +169,7 @@ public class Engine extends ApplicationAdapter {
 					 world.mapInit(map);
 					 world.playerInit(id, x, y, textures);
 					 hud = new Hud(world.getOtherPlayer(), defaultFont);
+					 playerUI = new PlayerUI(world.getOtherPlayer(), defaultFont, texturesUI);
 					 		 
 				 }catch (JSONException e) {
 					 Gdx.app.log("SocketIO", "Player position cannot be updated.");

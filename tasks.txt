@@ -1,3 +1,10 @@
-1 bloc pour placer
-collisions avec la lave (pas possible de marcher sur la lave)
-placer la hitbox
+1 bloc pour placer -done
+collisions avec la lave (pas possible de marcher sur la lave) -done
+placer la hitbox -done
+On commence avec 25 blocs 
+À tous les 15 secondes tu reçois 10 blocs
+30 blocs maximums
+Programmer les poings en premier
+Si c'est facile mettre des blocs de couleur différentes pour chaque personne
+
+

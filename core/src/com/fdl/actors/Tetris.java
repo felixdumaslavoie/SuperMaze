@@ -28,21 +28,24 @@ public class Tetris {
 	
 	public void updatePosition (float x, float y) {
 		
-		hitboxes[0].getRect().x = x + WIDTH_BOXES;
+		/*hitboxes[0].getRect().x = x + WIDTH_BOXES;
 		hitboxes[0].getRect().y = y;
 		hitboxes[1].getRect().x = x;
 		hitboxes[1].getRect().y = y;
 		hitboxes[2].getRect().x = x;
 		hitboxes[2].getRect().y = y + WIDTH_BOXES;
 		hitboxes[3].getRect().x = x;
-		hitboxes[3].getRect().y = y + 2*WIDTH_BOXES;
+		hitboxes[3].getRect().y = y + 2*WIDTH_BOXES;*/
+		hitboxes[0].getRect().x = x;
+		hitboxes[0].getRect().y = y;
+		
 	}
 	
 	
 	public Tetris(float x, float y, char direciton, Batch batch, ShapeRenderer renderer, Map mapRef)
 	{
 		
-		hitboxes = new Hitbox[4];
+		hitboxes = new Hitbox[1];
 		shapeSelected = 'L';
 		this.direction = direction;
 		
@@ -54,9 +57,9 @@ public class Tetris {
 		{
 		case 'u':
 			hitboxes[0] = new Hitbox(batch, renderer, x, y,WIDTH_BOXES, WIDTH_BOXES);
-			hitboxes[1] = new Hitbox(batch, renderer, x, y, WIDTH_BOXES, WIDTH_BOXES);
+			/*hitboxes[1] = new Hitbox(batch, renderer, x, y, WIDTH_BOXES, WIDTH_BOXES);
 			hitboxes[2] = new Hitbox(batch, renderer, x, y, WIDTH_BOXES, WIDTH_BOXES);
-			hitboxes[3] = new Hitbox(batch, renderer, x, y - 2*WIDTH_BOXES, WIDTH_BOXES, WIDTH_BOXES);
+			hitboxes[3] = new Hitbox(batch, renderer, x, y - 2*WIDTH_BOXES, WIDTH_BOXES, WIDTH_BOXES);*/
 			updatePosition(x,y);
 			break;
 			
@@ -73,10 +76,10 @@ public class Tetris {
 			switch(direction)
 			{
 			case 'd':
-				y -= 2* Tile.DEFAULT_WIDTH;
+				//  y -= Tile.DEFAULT_WIDTH;
 				break;
 			case 'l':
-				x -= Tile.DEFAULT_WIDTH;
+				//x -= Tile.DEFAULT_WIDTH;
 				break;
 			case 'r':
 				break;

@@ -14,6 +14,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.fdl.game.ressources.Textures;
 import com.fdl.gui.Hud;
 import com.fdl.map.Map;
+import com.fdl.map.Tile;
 import com.fdl.sound.SoundClass;
 
 public class Actor {
@@ -101,6 +102,7 @@ public class Actor {
 		// Collisions test
 		collisions = mapRef.collisionWith(defaultHitbox.getRect());
 
+		
 		if (collisions.contains(Textures.TILECODE_METAL) && isMoving) {
 			sounds.startLoop(SoundClass.METAL_FOOTSTEPS, 1);
 		}
@@ -133,11 +135,13 @@ public class Actor {
 		Vector2 dir = previousPosition.sub(position).nor();
 
 		isMoving = false;
-		if (vectorNormalNotZero(dir)) {
+		if (vectorNormalNotZero(dir) || dir.x != 0 && dir.y != 0) {
 			isMoving = true;
 		}
 
-		if (dir.x == 0.0f && dir.y == -1.0f) {
+		//System.out.println(dir.x + " - " + dir.y);			
+
+		if (dir.x == 0.0f && dir.y == -1.0f || dir.x <= -0.7 && dir.y <= -0.7) {
 			direction = 'u';
 			currentAnimation = new Animation<TextureRegion>(0.050f, textureAtlas.findRegions("walkingup"),
 					PlayMode.LOOP);
@@ -156,11 +160,12 @@ public class Actor {
 					PlayMode.LOOP);
 		}
 
-		if (dir.x == -1.0f && dir.y == 0.0f) {
+		if (dir.x == -1.0f && dir.y == 0.0f  ||  dir.x <= -0.7 && dir.y >= 0.7) {
 			direction = 'r';
 			currentAnimation = new Animation<TextureRegion>(0.050f, textureAtlas.findRegions("walkingright"),
 					PlayMode.LOOP);
 		}
+		
 
 		if (!isMoving) {
 			animationTime = 0;
@@ -175,7 +180,7 @@ public class Actor {
 
 		currentFrame = currentAnimation.getKeyFrame(animationTime, true);
 
-		defaultHitbox.setPosition(this.position.x, this.position.y);
+		defaultHitbox.setPosition(this.position.x + 17, this.position.y - 15);
 
 		batch.draw(currentFrame, this.position.x - 35, this.position.y - 35, WIDTH, HEIGHT);
 

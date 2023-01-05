@@ -11,6 +11,9 @@ import com.fdl.game.ressources.Textures;
 
 public class Tile {
 
+	static public final int TILECODE_LAVA = 1;
+	static public final int TILECODE_METAL = 2;
+	
 	protected int type;
 	private Texture texture;
 	
